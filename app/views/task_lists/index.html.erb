@@ -5,6 +5,10 @@
     <li>
       <%= task_list.name %>
       <%= task_list.description %>
+      <td><%= link_to 'Show', task_list %></td>
+      <td><%= link_to 'Edit', edit_task_list_path(task_list) %></td>
+      <td><%= link_to 'Destroy', task_list, confirm: 'Are you sure?', method: :delete %></td>
     </li>
   <% end %>
 </ul>
+<%= link_to 'New task list', new_task_list_path %>
