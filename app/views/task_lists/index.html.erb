@@ -1,14 +1,15 @@
-<h1>All task lists</h1>
-
-<ul class="task_lists">
+<h2>All task lists</h2>
+<div id="task_list">
   <% @task_lists.each do |task_list| %>
-    <li>
-      <%= task_list.name %>
-      <%= task_list.description %>
-      <td><%= link_to 'Show', task_list %></td>
-      <td><%= link_to 'Edit', edit_task_list_path(task_list) %></td>
-      <td><%= link_to 'Destroy', task_list, confirm: 'Are you sure?', method: :delete %></td>
-    </li>
+    <div class="item">
+        <div class="name"> <%= link_to "#{task_list.name}",  task_list_tasks_path(task_list)%></div>
+        <div class="description"><%= task_list.description %></div>
+        <div class="operations">
+          <%= link_to 'Edit', edit_task_list_path(task_list) %>
+          <%= link_to 'Destroy', task_list, confirm: 'Are you sure?', method: :delete %>
+          <%= link_to 'Tasks', task_list_tasks_path(task_list) %>
+        </div>
+    </div>
   <% end %>
-</ul>
+</div>
 <%= link_to 'New task list', new_task_list_path %>
