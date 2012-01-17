@@ -136,3 +136,25 @@ footer nav {
     font-size: 14px;
     margin: 0 0 10px 0;
 }
+
+#task .task_done{
+    color: #999;
+    text-decoration: line-through;
+}
+
+#task .not_done{
+    color: #333;
+}
+
+#task .name{
+    font-weight: bold;
+}
+#task .priority_low{
+    color: #006600;
+}
+#task .priority_middle{
+    color: #ffd324;
+}
+#task .priority_high{
+    color: #990000;
+}

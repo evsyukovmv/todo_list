@@ -1,15 +1,21 @@
 <h1>All tasks</h1>
 
-<ul class="task">
+<ul id="task">
   <% @tasks.each do |task| %>
-    <li>
-      <%= task.name %>
-      <%= task.description %>
-      <%= task.priority %>
-      <%= task.state? %>
-      <td><%= link_to 'Show', [@task_list, task] %></td>
-      <td><%= link_to 'Edit', edit_task_list_task_url(@task_list, task) %></td>
-      <td><%= link_to 'Destroy', [@task_list, task], confirm: 'Are you sure?', method: :delete %></td>
+    <li class="task_<%= task.state? ? 'done' : 'not_done' %> ">
+      <span class="name"><%= task.name %></span> -
+      <span class="description"><%= task.description %></span>
+      <span class="priority_<%= if (task.priority<2)
+                                    'low'
+                                elsif (task.priority<4)
+                                    'middle'
+                                else
+                                    'high'
+                                end
+                            %>"><%= task.priority %></span>
+      <%= link_to "#{task.state? ? "Done" : "During"}", change_state_task_list_task_url(@task_list, task) %>
+      <%= link_to 'Edit', edit_task_list_task_url(@task_list, task) %>
+      <%= link_to 'Destroy', [@task_list, task], confirm: 'Are you sure?', method: :delete %>
     </li>
   <% end %>
 </ul>

@@ -17,11 +17,11 @@
   </div>
   <div class="field">
     <%= f.label :description %><br />
-    <%= f.text_field :description %>
+    <%= f.text_area :description %>
   </div>
   <div class="field">
     <%= f.label :priority %><br />
-    <%= f.text_field :priority %>
+    <%= f.select :priority, 0..6  %>
   </div>
   <div class="actions">
     <%= f.submit %>

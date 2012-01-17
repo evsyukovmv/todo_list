@@ -1,6 +1,6 @@
 class TaskListsController < ApplicationController
    def index
-    @task_lists = TaskList.all
+    @task_lists = TaskList.order("id DESC").all
     @title = "All task lists"
   end
 

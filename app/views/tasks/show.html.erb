@@ -1,7 +1,7 @@
 <h1><%= @task.name %></h1>
 <p><%= @task.description %></p>
 <p><%= @task.priority %></p>
-<p><%= @task.state? %></p>
+<p><%= @task.state? ? "Done" : "During" %></p>
 
 <%= link_to 'Edit', edit_task_list_task_path(@task) %> |
 <%= link_to 'Back', task_list_tasks_path %>

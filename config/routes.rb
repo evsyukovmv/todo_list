@@ -1,6 +1,10 @@
 TodoList::Application.routes.draw do
   resources :task_lists do
-    resources :tasks
+    resources :tasks  do
+      member do
+        get 'change_state'
+      end
+    end
   end
 
 
