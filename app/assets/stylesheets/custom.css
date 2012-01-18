@@ -158,3 +158,11 @@ footer nav {
 #task .priority_high{
     color: #990000;
 }
+
+#state{
+    float: right;
+}
+
+#state a{
+    text-decoration: underline;
+}

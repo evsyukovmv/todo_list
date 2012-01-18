@@ -1,4 +1,5 @@
 TodoList::Application.routes.draw do
+  match '/task_lists/:task_list_id/tasks/:state' => 'tasks#index', state: /(done|inwork)/
   resources :task_lists do
     resources :tasks  do
       member do
@@ -6,6 +7,7 @@ TodoList::Application.routes.draw do
       end
     end
   end
+
 
 
   # The priority is based upon order of creation:

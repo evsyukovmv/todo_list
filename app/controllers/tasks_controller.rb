@@ -1,12 +1,19 @@
 class TasksController < ApplicationController
   def index
     @task_list = TaskList.find(params[:task_list_id])
-    @tasks = @task_list.task.order "id DESC"
+
+    if params[:state] == 'done'
+      @tasks = @task_list.task.where("state = 't'").order "id DESC"
+    elsif params[:state] == 'inwork'
+      @tasks = @task_list.task.where("state = 'f'").order "id DESC"
+    else
+      @tasks = @task_list.task.order "id DESC"
+    end
+
     @title = "All tasks"
  end
 
  def show
-   #@task_list = TaskList.find(params[:task_list_id])
    @task = Task.find(params[:id])
    @title = @task.name
  end
@@ -61,6 +68,10 @@ class TasksController < ApplicationController
     else
       render task_list_tasks_path
     end
+
+  end
+
+  def show_by_state
 
   end
 

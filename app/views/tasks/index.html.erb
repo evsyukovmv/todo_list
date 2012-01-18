@@ -1,5 +1,5 @@
+<div id="state"><%= link_to 'Done', task_list_tasks_url+'/done' %> <%= link_to 'In work', task_list_tasks_url+'/inwork' %></div>
 <h1>All tasks</h1>
-
 <ul id="task">
   <% @tasks.each do |task| %>
     <li class="task_<%= task.state? ? 'done' : 'not_done' %> ">
@@ -13,7 +13,7 @@
                                     'high'
                                 end
                             %>"><%= task.priority %></span>
-      <%= link_to "#{task.state? ? "Done" : "During"}", change_state_task_list_task_url(@task_list, task) %>
+      <%= link_to "#{task.state? ? "Done" : "In work"}", change_state_task_list_task_url(@task_list, task) %>
       <%= link_to 'Edit', edit_task_list_task_url(@task_list, task) %>
       <%= link_to 'Destroy', [@task_list, task], confirm: 'Are you sure?', method: :delete %>
     </li>
