@@ -61,17 +61,19 @@ class TasksController < ApplicationController
   def change_state
     @task_list = TaskList.find(params[:task_list_id])
     @task = @task_list.task.find(params[:id])
-    @task.state = !(@task.state?)
+    if @task.state == :"Not done"
+      @task.state = :"In process"
+    elsif @task.state == :"In process"
+      @task.state = :"Done"
+    else
+      @task.state = :"Not done"
+    end
 
     if @task.save
       redirect_to task_list_tasks_path, notice: 'Task state was successfully updated.'
     else
       render task_list_tasks_path
     end
-
-  end
-
-  def show_by_state
 
   end
 

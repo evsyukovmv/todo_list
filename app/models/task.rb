@@ -13,7 +13,9 @@
 #
 
 class Task < ActiveRecord::Base
-  attr_accessible :name, :description, :sate, :priority
+  attr_accessible :name, :description, :state, :priority
+
+  symbolize :state, :in => [:"Not done", :"In process", "Done"], :scopes => true, :i18n => false
 
   belongs_to :task_list
 end

@@ -2,7 +2,7 @@
 <h1>All tasks</h1>
 <ul id="task">
   <% @tasks.each do |task| %>
-    <li class="task_<%= task.state? ? 'done' : 'not_done' %> ">
+    <li class="task_<%= task.state == :"Done" ? 'done' : 'not_done' %> ">
       <span class="name"><%= task.name %></span> -
       <span class="description"><%= task.description %></span>
       <span class="priority_<%= if (task.priority<2)
@@ -13,7 +13,7 @@
                                     'high'
                                 end
                             %>"><%= task.priority %></span>
-      <%= link_to "#{task.state? ? "Done" : "In work"}", change_state_task_list_task_url(@task_list, task) %>
+      <%= link_to "#{task.state}", change_state_task_list_task_url(@task_list, task) %>
       <%= link_to 'Edit', edit_task_list_task_url(@task_list, task) %>
       <%= link_to 'Destroy', [@task_list, task], confirm: 'Are you sure?', method: :delete %>
     </li>

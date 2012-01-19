@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120111153518) do
+ActiveRecord::Schema.define(:version => 20120118174610) do
 
   create_table "task_lists", :force => true do |t|
     t.string   "name"
@@ -23,7 +23,7 @@ ActiveRecord::Schema.define(:version => 20120111153518) do
   create_table "tasks", :force => true do |t|
     t.string   "name"
     t.text     "description"
-    t.boolean  "state",        :default => false
+    t.string   "state",        :default => "Not done"
     t.integer  "priority",     :default => 0
     t.integer  "task_list_id"
     t.datetime "created_at"
