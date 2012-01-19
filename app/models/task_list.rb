@@ -12,5 +12,6 @@
 class TaskList < ActiveRecord::Base
   attr_accessible :name, :description
 
-  has_many :task
+  has_many :task, :dependent => :destroy
+  belongs_to :user
 end

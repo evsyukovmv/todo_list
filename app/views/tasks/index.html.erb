@@ -1,4 +1,4 @@
-<div id="state"><%= link_to 'Done', task_list_tasks_url+'/done' %> <%= link_to 'In work', task_list_tasks_url+'/inwork' %></div>
+<div id="state"><%= link_to 'Done', task_list_tasks_url+'/done' %> <%= link_to 'In process', task_list_tasks_url+'/inprocess' %> <%= link_to 'Not done', task_list_tasks_url+'/notdone' %></div>
 <h1>All tasks</h1>
 <ul id="task">
   <% @tasks.each do |task| %>
