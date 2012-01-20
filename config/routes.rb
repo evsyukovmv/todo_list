@@ -1,13 +1,33 @@
 TodoList::Application.routes.draw do
-  match '/task_lists/:task_list_id/tasks/:state' => 'tasks#index', state: /(done|inwork)/
-  resources :task_lists do
-    resources :tasks  do
-      member do
-        get 'change_state'
+
+  match '/signup',  :to => 'users#new'
+
+  match '/signin', :to => 'sessions#new'
+  match '/signout', :to => 'sessions#destroy'
+
+  match 'users/:user_id/task_lists/:task_list_id/tasks/:state' => 'tasks#index', state: /(done|inprocess|notdone)/
+
+  resources :users do
+    resources :task_lists do
+      resources :tasks  do
+        member do
+          get 'change_state'
+        end
+      end
+    end
+
+    resources :projects do
+      resources :task_lists do
+        resources :tasks  do
+          member do
+            get 'change_state'
+          end
+        end
       end
     end
   end
 
+  resources :sessions, :only => [:new, :create, :destroy]
 
 
   # The priority is based upon order of creation:

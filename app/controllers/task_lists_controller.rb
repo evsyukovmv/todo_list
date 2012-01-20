@@ -1,33 +1,40 @@
 class TaskListsController < ApplicationController
    def index
-    @task_lists = TaskList.order("id DESC").all
-    @title = "All task lists"
+     @user = User.find(params[:user_id])
+     @task_lists = @user.task_lists.order("id DESC")
+     @title = "All task lists"
   end
 
   def show
-    @task_list = TaskList.find(params[:id])
+    @user = User.find(params[:user_id])
+    @task_list = @user.task_lists.find(params[:id])
     @title = @task_list.name
   end
 
   def new
-    @task_list = TaskList.new
+    @user = User.find(params[:user_id])
+    @task_list = @user.task_lists.new
   end
 
   def edit
-    @task_list = TaskList.find(params[:id])
+    @user = User.find(params[:user_id])
+    @task_list = @user.task_lists.find(params[:id])
   end
 
   def create
+    @user = User.find(params[:user_id])
     @task_list = TaskList.new(params[:task_list])
+    @task_list.user_id = @user.id
     if @task_list.save
-      redirect_to @task_list, notice: 'Task list was successfully created.'
+      redirect_to [@user, @task_list], notice: 'Task list was successfully created.'
     else
       render action: "new"
     end
   end
 
   def update
-    @task_list = TaskList.find(params[:id])
+    @user = User.find(params[:user_id])
+    @task_list = @user.task_lists.find(params[:id])
     if @task_list.update_attributes(params[:task_list])
       redirect_to @task_list, notiece: 'Task list was successfully updated.'
     else
@@ -36,10 +43,11 @@ class TaskListsController < ApplicationController
   end
 
   def destroy
-    @task_list = TaskList.find(params[:id])
+    @user = User.find(params[:user_id])
+    @task_list = @user.task_lists.find(params[:id])
     @task_list.destroy
 
-    redirect_to task_lists_path
+    redirect_to user_task_lists_path
   end
 
 end

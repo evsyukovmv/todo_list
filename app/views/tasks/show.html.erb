@@ -3,5 +3,5 @@
 <p><%= @task.priority %></p>
 <p><%= @task.state %></p>
 
-<%= link_to 'Edit', edit_task_list_task_path(@task) %> |
-<%= link_to 'Back', task_list_tasks_path %>
+<%= link_to 'Edit', edit_user_task_list_task_path(@user, @task_list, @task) %> |
+<%= link_to 'Back', user_task_list_tasks_path %>
