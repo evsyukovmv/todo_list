@@ -1,11 +1,13 @@
 TodoList::Application.routes.draw do
 
   match '/signup',  :to => 'users#new'
-
   match '/signin', :to => 'sessions#new'
   match '/signout', :to => 'sessions#destroy'
 
   match 'users/:user_id/task_lists/:task_list_id/tasks/:state' => 'tasks#index', state: /(done|inprocess|notdone)/
+  match 'users/:user_id/project/:project_id/task_lists/:task_list_id/tasks/:state' => 'tasks#index', state: /(done|inprocess|notdone)/
+
+  resources :sessions, :only => [:new, :create, :destroy]
 
   resources :users do
     resources :task_lists do
@@ -26,9 +28,6 @@ TodoList::Application.routes.draw do
       end
     end
   end
-
-  resources :sessions, :only => [:new, :create, :destroy]
-
 
   # The priority is based upon order of creation:
   # first created -> highest priority.

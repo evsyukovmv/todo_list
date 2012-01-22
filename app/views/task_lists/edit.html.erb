@@ -2,5 +2,10 @@
 
 <%= render 'form' %>
 
-<%= link_to 'Show', @task_list %> |
-<%= link_to 'Back', task_lists_path %>
+<% if !@project.nil? %>
+    <%= link_to 'Show', [@user, @project, @task_list] %> |
+    <%= link_to 'Back', user_project_task_lists_path %>
+<% else %>
+    <%= link_to 'Show', [@user, @task_list] %> |
+    <%= link_to 'Back', user_task_lists_path %>
+<% end %>

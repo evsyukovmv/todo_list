@@ -21,6 +21,9 @@ class UsersController < ApplicationController
   end
 
   def show
+    @user = User.find(params[:id])
+    @projects = @user.projects
+    @task_lists = @user.task_lists.where("project_id IS NULL")
 
   end
 

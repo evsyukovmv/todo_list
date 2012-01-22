@@ -2,4 +2,4 @@
 
 <%= render 'form' %>
 
-<%= link_to 'Back', user_task_list_tasks_path %>
+<%= @project.nil?? link_to('Back', user_task_list_tasks_path) : link_to('Back', user_project_task_list_tasks_path) %>

@@ -2,14 +2,30 @@
 <div id="task_list">
   <% @task_lists.each do |task_list| %>
     <div class="item">
-        <div class="name"> <%= link_to "#{task_list.name}",  user_task_list_tasks_path(@user, task_list)%></div>
+        <div class="name">
+          <% if !@project.nil? %>
+            <%= link_to "#{task_list.name}",  user_project_task_list_tasks_path(@user, @project, task_list)  %>
+          <% else %>
+            <%= link_to "#{task_list.name}",  user_task_list_tasks_path(@user, task_list) %>
+          <% end %>
+        </div>
         <div class="description"><%= task_list.description %></div>
         <div class="operations">
-          <%= link_to 'Edit', edit_user_task_list_path(@user, task_list) %>
-          <%= link_to 'Destroy', [@user, task_list], confirm: 'Are you sure?', method: :delete %>
-          <%= link_to 'Tasks', user_task_list_tasks_path(@user, task_list) %>
+          <% if !@project.nil? %>
+            <%= link_to 'Edit', edit_user_project_task_list_path(@user, @project, task_list) %>
+            <%= link_to 'Destroy', [@user, @project, task_list], confirm: 'Are you sure?', method: :delete %>
+            <%= link_to 'Tasks', user_project_task_list_tasks_path(@user, @project, task_list) %>
+          <% else %>
+            <%= link_to 'Edit', edit_user_task_list_path(@user, task_list) %>
+            <%= link_to 'Destroy', [@user, task_list], confirm: 'Are you sure?', method: :delete %>
+            <%= link_to 'Tasks', user_task_list_tasks_path(@user, task_list) %>
+          <% end %>
         </div>
     </div>
   <% end %>
 </div>
-<%= link_to 'New task list', new_user_task_list_path(@user) %>
+<% if !@project.nil? %>
+<%= link_to 'New task list', new_user_project_task_list_path %>
+<% else %>
+<%= link_to 'New task list', new_user_task_list_path %>
+<% end %>

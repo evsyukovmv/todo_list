@@ -1,4 +1,4 @@
-<%= form_for [@user, @task_list] do |f| %>
+<%= form_for [@user, @project, @task_list] do |f| %>
   <% if @task_list.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@task_list.errors.count, "error") %> prohibited this task list from being saved:</h2>

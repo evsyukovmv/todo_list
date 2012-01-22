@@ -12,10 +12,25 @@
                                 else
                                     'high'
                                 end %>"><%= task.priority %></span>
-      <%= link_to "#{task.state}", change_state_user_task_list_task_url(@user, @task_list, task) %>
-      <%= link_to 'Edit', edit_user_task_list_task_url(@user, @task_list, task) %>
-      <%= link_to 'Destroy', [@user, @task_list, task], confirm: 'Are you sure?', method: :delete %>
+
+      <% if !@project.nil? %>
+          <%= link_to "#{task.state}", change_state_user_project_task_list_task_url(@user, @project, @task_list, task) %>
+      <% else %>
+          <%= link_to "#{task.state}", change_state_user_task_list_task_url(@user, @task_list, task) %>
+      <% end %>
+
+      <% if !@project.nil? %>
+        <%= link_to 'Edit', edit_user_project_task_list_path(@user, @project, @task_list, task) %>
+        <%= link_to 'Destroy', [@user, @project, @task_list, task], confirm: 'Are you sure?', method: :delete %>
+      <% else %>
+        <%= link_to 'Edit', edit_user_task_list_path(@user, @task_list, task) %>
+        <%= link_to 'Destroy', [@user, @task_list, task], confirm: 'Are you sure?', method: :delete %>
+      <% end %>
     </li>
   <% end %>
 </ul>
-<%= link_to 'New task', new_user_task_list_task_path %>
+<% if !@project.nil? %>
+    <%= link_to 'New task', new_user_project_task_list_task_path %>
+<% else %>
+    <%= link_to 'New task', new_user_task_list_task_path %>
+<% end %>

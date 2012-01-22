@@ -1,7 +1,13 @@
 class TasksController < ApplicationController
   def index
     @user = User.find(params[:user_id])
-    @task_list = @user.task_lists.find(params[:task_list_id])
+
+    if !params[:project_id].nil?
+      @project = @user.projects.find(params[:project_id])
+      @task_list = @project.task_lists.find(params[:task_list_id])
+    else
+      @task_list = @user.task_lists.find(params[:task_list_id])
+    end
 
     if params[:state] == 'done'
       @tasks = @task_list.task.where("state = 'Done'").order "id DESC"
@@ -18,7 +24,12 @@ class TasksController < ApplicationController
 
  def show
    @user = User.find(params[:user_id])
-   @task_list = @user.task_lists.find(params[:task_list_id])
+   if !params[:project_id].nil?
+     @project = @user.projects.find(params[:project_id])
+     @task_list = @project.task_lists.find(params[:task_list_id])
+   else
+     @task_list = @user.task_lists.find(params[:task_list_id])
+   end
 
    @task = @task_list.task.find(params[:id])
    @title = @task.name
@@ -26,24 +37,42 @@ class TasksController < ApplicationController
 
  def new
    @user = User.find(params[:user_id])
-   @task_list = @user.task_lists.find(params[:task_list_id])
+
+   if !params[:project_id].nil?
+     @project = @user.projects.find(params[:project_id])
+     @task_list = @project.task_lists.find(params[:task_list_id])
+   else
+     @task_list = @user.task_lists.find(params[:task_list_id])
+   end
+
    @task = @task_list.task.new
  end
 
  def edit
    @user = User.find(params[:user_id])
-   @task_list = @user.task_lists.find(params[:task_list_id])
+
+   if !params[:project_id].nil?
+     @project = @user.projects.find(params[:project_id])
+     @task_list = @project.task_lists.find(params[:task_list_id])
+   else
+     @task_list = @user.task_lists.find(params[:task_list_id])
+   end
+
    @task = @task_list.task.find(params[:id])
  end
 
  def create
    @user = User.find(params[:user_id])
-   @task_list = @user.task_lists.find(params[:task_list_id])
+   if !params[:project_id].nil?
+     @project = @user.projects.find(params[:project_id])
+     @task_list = @project.task_lists.find(params[:task_list_id])
+   else
+     @task_list = @user.task_lists.find(params[:task_list_id])
+   end
    @task = Task.new(params[:task])
    @task.task_list_id= @task_list.id
-
    if @task.save
-     redirect_to [@user, @task_list, @task], notice: 'Task was successfully created.'
+     redirect_to [@user, @project, @task_list, @task], notice: 'Task was successfully created.'
    else
      render action: "new"
    end
@@ -51,10 +80,17 @@ class TasksController < ApplicationController
 
  def update
    @user = User.find(params[:user_id])
-   @task_list = @user.task_lists.find(params[:task_list_id])
+
+   if !params[:project_id].nil?
+     @project = @user.projects.find(params[:project_id])
+     @task_list = @project.task_lists.find(params[:task_list_id])
+   else
+     @task_list = @user.task_lists.find(params[:task_list_id])
+   end
+
    @task = @task_list.task.find(params[:id])
    if @task.update_attributes(params[:task])
-     redirect_to [@user, @task_list, @task], notiece: 'Task was successfully updated.'
+     redirect_to [@user, @project, @task_list, @task], notiece: 'Task was successfully updated.'
    else
      render action: edit
    end
@@ -62,15 +98,31 @@ class TasksController < ApplicationController
 
  def destroy
    @user = User.find(params[:user_id])
-   @task_list = @user.task_lists.find(params[:task_list_id])
+
+   if !params[:project_id].nil?
+     @project = @user.projects.find(params[:project_id])
+     @task_list = @project.task_lists.find(params[:task_list_id])
+   else
+     @task_list = @user.task_lists.find(params[:task_list_id])
+   end
+
    @task = @task_list.task.find(params[:id])
    @task.destroy
-   redirect_to user_task_list_tasks_path
+
+   @project.nil?? redirect_to(user_task_list_tasks_path) : redirect_to(user_project_task_list_tasks_path)
+
  end
 
   def change_state
     @user = User.find(params[:user_id])
-    @task_list = @user.task_lists.find(params[:task_list_id])
+
+    if !params[:project_id].nil?
+      @project = @user.projects.find(params[:project_id])
+      @task_list = @project.task_lists.find(params[:task_list_id])
+    else
+      @task_list = @user.task_lists.find(params[:task_list_id])
+    end
+
     @task = @task_list.task.find(params[:id])
     if @task.state == :"Not done"
       @task.state = :"In process"
@@ -81,9 +133,17 @@ class TasksController < ApplicationController
     end
 
     if @task.save
-      redirect_to user_task_list_tasks_path, notice: 'Task state was successfully updated.'
+      if !@project.nil?
+        redirect_to user_project_task_list_tasks_path, notice: 'Task state was successfully updated.'
+      else
+        redirect_to user_task_list_tasks_path, notice: 'Task state was successfully updated.'
+      end
     else
-      render user_task_list_tasks_path
+      if !@project.nil?
+        render user_project_task_list_tasks_path
+      else
+        render user_task_list_tasks_path
+      end
     end
 
   end
