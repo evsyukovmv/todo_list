@@ -4,6 +4,7 @@ class User < ActiveRecord::Base
 
   has_many :task_lists, :dependent => :destroy
   has_many :projects, :dependent => :destroy
+  has_many :relationships, :foreign_key => "followed_id"
 
   email_regex = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
 
