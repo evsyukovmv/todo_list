@@ -1,0 +1,13 @@
+= link_to "Invite", invite_project_url(@project)
+%ul
+  %li
+    %b
+      = @owner.name
+    \-
+    = @owner.email
+  - @peoples.each do |people|
+    %li
+      %b = people.name
+      \-
+      = people.email
+      = link_to 'Destroy', project_path+'/rempeople/'+people.id.to_s, confirm: 'Are you sure?', method: :delete

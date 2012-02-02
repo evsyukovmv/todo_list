@@ -13,7 +13,7 @@
 #
 
 class Task < ActiveRecord::Base
-  attr_accessible :name, :description, :state, :priority
+  attr_accessible :name, :description, :state, :priority, :performer_id
 
   symbolize :state, :in => [:"Not done", :"In process", "Done"], :scopes => true, :i18n => false
 

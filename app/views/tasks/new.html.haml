@@ -1,0 +1,4 @@
+%h1
+  New task
+= render 'form'
+= @project.nil?? link_to('Back', task_list_tasks_path) : link_to('Back', task_list_tasks_path)

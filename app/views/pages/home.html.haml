@@ -1,0 +1,6 @@
+- if signed_in?
+  = render 'shared/project_task_list_item'
+- else
+  %h1
+    Todo list
+    = link_to "Sign up now!", signup_path, :class => "signup_button round"

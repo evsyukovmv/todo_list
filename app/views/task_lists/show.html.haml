@@ -1,0 +1,10 @@
+%h1
+  = @task_list.name
+%p
+  = @task_list.description
+= link_to 'Edit', edit_task_list_path(@task_list)
+|
+- if !@project.nil?
+  = link_to 'Back', project_task_lists_path(@project)
+- else
+  = link_to 'Back', task_lists_path

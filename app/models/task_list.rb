@@ -14,4 +14,5 @@ class TaskList < ActiveRecord::Base
 
   has_many :task, :dependent => :destroy
   belongs_to :user
+  belongs_to :project
 end

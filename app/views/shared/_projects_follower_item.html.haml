@@ -1,0 +1,12 @@
+#project
+  - @projects_follower_item.each do |project|
+    .item
+      .name
+        = link_to "#{project.name}",  project_task_lists_path(project)
+      .description
+        = project.description
+      .operations
+        = link_to 'Edit', edit_project_path(project)
+        = link_to 'Destroy', [project], confirm: 'Are you sure?', method: :delete
+        = link_to 'Tasks lists', project_task_lists_path(project)
+        = link_to 'Peoples', peoples_project_url(project)

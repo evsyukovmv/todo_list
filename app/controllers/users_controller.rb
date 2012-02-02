@@ -1,5 +1,9 @@
 class UsersController < ApplicationController
 
+  def index
+
+  end
+
   def new
     @user = User.new
     @title = "Sign up"
@@ -21,10 +25,8 @@ class UsersController < ApplicationController
   end
 
   def show
-    @user = User.find(params[:id])
-    @projects = @user.projects
-    @task_lists = @user.task_lists.where("project_id IS NULL")
-
+    @projects_item = current_user.projects
+    @task_lists_item = current_user.task_lists.where("project_id IS NULL")
   end
 
   def update
@@ -44,8 +46,9 @@ class UsersController < ApplicationController
 
   private
 
-    def correct_user
-      @user = User.find(params[:id])
-      redirect_to(root_path) unless current_user?(@user)
-    end
+  def correct_user
+    @user = User.find(params[:id])
+    redirect_to(root_path) unless current_user?(@user)
+  end
+
 end

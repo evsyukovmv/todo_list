@@ -1,0 +1,11 @@
+%h1
+  Editing task
+  = render 'form'
+- if !@project.nil?
+  = link_to 'Show', [@task_list, @task]
+  |
+  = link_to 'Back', task_list_task_path
+- else
+  = link_to 'Show', [@task_list, @task]
+  |
+  = link_to 'Back', task_list_task_path

@@ -1,0 +1,11 @@
+#task_list
+  - @task_lists_item.each do |task_list|
+    .item
+      .name
+        = link_to "#{task_list.name}",  task_list_tasks_path(task_list)
+      .description
+        = task_list.description
+      .operations
+        = link_to 'Edit', edit_task_list_path(task_list)
+        = link_to 'Destroy', [task_list], confirm: 'Are you sure?', method: :delete
+        = link_to 'Tasks', task_list_tasks_path(task_list)
