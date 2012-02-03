@@ -16,6 +16,7 @@
         = task.description
       = content_tag :span, :class => "priority_#{ task.priority>4 ? 'high' : task.priority>2 ? 'middle' : 'low' }" do
         = task.priority
+      = task.user.name if !task.user.nil?
       = link_to "#{task.state}", change_state_task_list_task_url(@task_list, task)
       = link_to 'Edit', edit_task_list_task_url(@task_list, task)
       = link_to 'Destroy', [@task_list, task], confirm: 'Are you sure?', method: :delete

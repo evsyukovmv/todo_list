@@ -33,7 +33,6 @@ class TasksController < ApplicationController
  end
 
  def new
-
      @task_list = TaskList.find(params[:task_list_id])
      @project = @task_list.project
      if !@project.nil?
@@ -57,14 +56,10 @@ class TasksController < ApplicationController
  end
 
  def create
-   if !params[:project_id].nil?
-     @project = Project.find(params[:project_id])
-     @task_list = @project.task_lists.find(params[:task_list_id])
-   else
-     @task_list = TaskList.find(params[:task_list_id])
-   end
    @task = Task.new(params[:task])
    @task.task_list_id= @task_list.id
+   @project = @task.task_list.project if !@task.task_list.project.nil?
+   Mailer.changed(@task.user, @project.name, @task.name).deliver if !@task.performer_id.nil?
    if @task.save
      redirect_to [@task_list, @task], notice: 'Task was successfully created.'
    else
@@ -104,14 +99,13 @@ class TasksController < ApplicationController
  end
 
   def change_state
-    if !params[:project_id].nil?
-      @project = Project.find(params[:project_id])
-      @task_list = @project.task_lists.find(params[:task_list_id])
-    else
-      @task_list = TaskList.find(params[:task_list_id])
+
+    @task_list = TaskList.find(params[:task_list_id])
+    @task = @task_list.task.find(params[:id])
+    if !@task_list.project.nil?
+      @project = @task_list.project
     end
 
-    @task = @task_list.task.find(params[:id])
     if @task.state == :"Not done"
       @task.state = :"In process"
     elsif @task.state == :"In process"
@@ -121,11 +115,10 @@ class TasksController < ApplicationController
     end
 
     if @task.save
-      if !@project.nil?
-        redirect_to task_list_tasks_path, notice: 'Task state was successfully updated.'
-      else
-        redirect_to task_list_tasks_path, notice: 'Task state was successfully updated.'
+      if !@project.nil? and !@task.performer_id.nil?
+        Mailer.changed(@task.user, @project.name, @task.name).deliver
       end
+      redirect_to task_list_tasks_path, notice: 'Task state was successfully updated.'
     else
       if !@project.nil?
         render task_list_tasks_path

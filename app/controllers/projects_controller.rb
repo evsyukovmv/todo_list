@@ -65,6 +65,7 @@ class ProjectsController < ApplicationController
         @relationship.follower_id = @invited_user.id
         @relationship.project_id = @project.id
         if @relationship.save
+          Mailer.invite(@invited_user, @project.name).deliver
           redirect_to invite_project_url(@project), notice: 'User was successfully added to project.'
         else
           edirect_to invite_project_url(@project), notice: 'Error add user to project.'
@@ -87,6 +88,7 @@ class ProjectsController < ApplicationController
 
   def authorized_user
     @project = Project.find_by_id(params[:id])
+    @project = Project.find(params[:project_id]) if !params[:project_id].nil?
     if @project.nil?
       redirect_to access_url
     elsif @project.user_id != current_user.id
