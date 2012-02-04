@@ -3,7 +3,13 @@
     %ul
       %li
         = link_to "Home", root_path
-      %li
-        = link_to "Help", '#'
-      %li
-        = link_to "Sign in", '#'
+      - if signed_in?
+        %li
+          = link_to "Projects", projects_path
+        %li
+          = link_to "Task lists", task_lists_path
+        %li
+          = link_to "Sign out", signout_path, :method => :delete
+      - else
+        %li
+          = link_to "Sign in", signin_path
