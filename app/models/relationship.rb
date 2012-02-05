@@ -3,7 +3,7 @@ class Relationship < ActiveRecord::Base
 
   belongs_to :follower, :class_name => "User"
   belongs_to :followed, :class_name => "User"
-  belongs_to :projects, :class_name => "Project"
+  belongs_to :projects, :class_name => "Project", :foreign_key => "project_id"
 
   validates :follower_id, :presence => true
   validates :followed_id, :presence => true

@@ -124,6 +124,12 @@ footer nav {
   float: none;
 }
 
+#flash_error{
+    font-weight: bold;
+    color: #ff0000;
+
+}
+
 
 
 #task_list .item{

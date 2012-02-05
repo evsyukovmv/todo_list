@@ -6,10 +6,10 @@ class TaskListsController < ApplicationController
     if !params[:project_id].nil?
       :authorized_user
       @project = Project.find(params[:project_id])
-      @task_lists = @project.task_lists
+      @task_lists_item = @project.task_lists
       @title += ' - project '+@project.name
     else
-      @task_lists = current_user.task_lists.where('project_id IS NULL')
+      @task_lists_item = current_user.task_lists.where('project_id IS NULL')
     end
 
   end

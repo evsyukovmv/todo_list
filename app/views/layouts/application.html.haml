@@ -10,7 +10,7 @@
       = render 'layouts/header'
       %section.round
         - flash.each do |key, value|
-          = content_tag :div, value, :id => "flash #{key}" if value.is_a?(String)
+          = content_tag :div, value, :id => "flash_#{key}" if value.is_a?(String)
         = yield
       = render 'layouts/footer'
       = debug(params) if Rails.env.development?
