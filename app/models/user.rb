@@ -4,8 +4,8 @@ class User < ActiveRecord::Base
 
   has_many :task_lists, :dependent => :destroy
   has_many :projects, :dependent => :destroy
-  has_many :relationships, :foreign_key => "followed_id"
   has_many :tasks, :foreign_key => :performer_id
+  has_many :relationships
 
   email_regex = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
 
@@ -19,6 +19,11 @@ class User < ActiveRecord::Base
                        :length => { :within => 6..40 }
 
   before_save :encrypt_password
+
+  def projects
+    relationships.map(&:project) | Project.where(:user_id => id)
+  end
+
 
   def has_password?(submitted_password)
     encrypted_password == encrypt(submitted_password)

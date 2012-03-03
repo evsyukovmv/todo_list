@@ -12,6 +12,8 @@
 class TaskList < ActiveRecord::Base
   attr_accessible :name, :description
 
+  validates :name, :presence => true
+
   has_many :task, :dependent => :destroy
   belongs_to :user
   belongs_to :project

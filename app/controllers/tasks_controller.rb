@@ -37,7 +37,7 @@ class TasksController < ApplicationController
      @project = @task_list.project
      if !@project.nil?
        @relationship = Relationship.where("project_id = ?", @project.id)
-       @performers = @relationship.map{ |relation| User.find_by_id(relation.follower_id)}
+       @performers = @relationship.map{ |relation| User.find_by_id(relation.user_id)}
        @performers.unshift(@project.user)
      end
 
@@ -45,14 +45,14 @@ class TasksController < ApplicationController
  end
 
  def edit
-   if !params[:project_id].nil?
-     @project = Project.find(params[:project_id])
-     @task_list = @project.task_lists.find(params[:task_list_id])
-   else
-     @task_list = TaskList.find(params[:task_list_id])
-   end
-
+   @task_list = TaskList.find(params[:task_list_id])
    @task = @task_list.task.find(params[:id])
+   @project = @task_list.project
+   if !@project.nil?
+     @relationship = Relationship.where("project_id = ?", @project.id)
+     @performers = @relationship.map{ |relation| User.find_by_id(relation.user_id)}
+     @performers.unshift(@project.user)
+   end
  end
 
  def create
@@ -63,7 +63,7 @@ class TasksController < ApplicationController
    if @task.save
      redirect_to [@task_list, @task], notice: 'Task was successfully created.'
    else
-     render action: "new"
+     render 'new'
    end
  end
 
@@ -77,9 +77,10 @@ class TasksController < ApplicationController
 
    @task = @task_list.task.find(params[:id])
    if @task.update_attributes(params[:task])
+     Mailer.changed(@task.user, @project.name, @task.name).deliver if !@task.performer_id.nil?
      redirect_to [@task_list, @task], notiece: 'Task was successfully updated.'
    else
-     render action: edit
+     render 'edit'
    end
  end
 
@@ -142,11 +143,11 @@ class TasksController < ApplicationController
       @project = @task_list.project
       if !@project.nil?
         if @project.user_id != current_user.id
-          @relationship = Relationship.where("project_id = ? and follower_id = ?", @project.id, current_user.id)
+          @relationship = Relationship.where("project_id = ? and user_id = ?", @project.id, current_user.id)
           @follower = @relationship.first if !@relationship.nil?
           if @follower.nil?
             redirect_to access_url
-          elsif current_user.id != @follower.follower_id
+          elsif current_user.id != @follower.user_id
             redirect_to access_url
           end
         end

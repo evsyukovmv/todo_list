@@ -26,9 +26,13 @@ group :development do
 end
 
 group :test do
+  gem 'webrat'
   gem 'rspec-rails'
   gem 'factory_girl_rails'
   gem 'database_cleaner'
   gem 'shoulda-matchers'
   gem 'turn', '~> 0.8.3', :require => false
+  gem 'cucumber', '1.1.4'
+  gem 'cucumber-rails', '1.2.1'
+  gem 'capybara', '1.1.2'
 end

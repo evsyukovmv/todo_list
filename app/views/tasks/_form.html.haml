@@ -20,6 +20,7 @@
     = f.label :priority
     %br
     = f.select :priority, 0..6
+  = @performers.nil?
   - if !@performers.nil?
     = f.label :performer_id
     = f.select :performer_id, options_from_collection_for_select(@performers, 'id', 'name')

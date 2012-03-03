@@ -1,4 +1,5 @@
 - if signed_in?
+  = render 'shared/error_messages'
   = render 'shared/project_task_list_item'
 - else
   %h1

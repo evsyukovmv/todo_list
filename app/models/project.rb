@@ -5,5 +5,5 @@ class Project < ActiveRecord::Base
 
   belongs_to :user
   has_many :task_lists, :dependent => :destroy
-  has_many :relationships
+  has_many :followers, :through => :relationships
 end

@@ -1,10 +1,7 @@
 class ProjectsController < ApplicationController
   before_filter :authorized_user, except: [:index, :create, :new]
   def index
-    @projects_item = current_user.projects.order("id DESC")
-    @relationship = Relationship.where("follower_id = ?", current_user.id)
-    @projects_follower_item = @relationship.map{ |relation| Project.find_by_id(relation.project_id)}
-    @task_lists_item = current_user.task_lists.where("project_id IS NULL")
+    @projects_item = current_user.projects
     @title = "All projects"
   end
 
@@ -36,7 +33,7 @@ class ProjectsController < ApplicationController
     if @project.update_attributes(params[:project])
       redirect_to @project, notice: 'Project was successfully updated.'
     else
-      render action: edit
+      render 'edit'
     end
   end
 
@@ -51,7 +48,7 @@ class ProjectsController < ApplicationController
     @project = Project.find(params[:id])
     @owner = @project.user
     @relationship = Relationship.where("project_id = ?", @project.id)
-    @peoples = @relationship.map{ |relation| User.find_by_id(relation.follower_id)}
+    @peoples = @relationship.map{ |relation| User.find_by_id(relation.user_id)}
   end
 
   def invite
@@ -61,14 +58,13 @@ class ProjectsController < ApplicationController
       redirect_to invite_project_url(@project), notice: 'No such user.' if @invited_user.nil?
       if !@project.nil? and !@invited_user.nil?
         @relationship = Relationship.new
-        @relationship.followed_id = current_user.id
-        @relationship.follower_id = @invited_user.id
+        @relationship.user_id = @invited_user.id
         @relationship.project_id = @project.id
         if @relationship.save
           Mailer.invite(@invited_user, @project.name).deliver
           redirect_to invite_project_url(@project), notice: 'User was successfully added to project.'
         else
-          edirect_to invite_project_url(@project), notice: 'Error add user to project.'
+          redirect_to invite_project_url(@project), notice: 'Error add user to project.'
         end
       end
     end
@@ -78,7 +74,7 @@ class ProjectsController < ApplicationController
   def rempeople
     @user = User.find_by_id(params[:id])
     @project = Project.find(params[:project_id])
-    @relationship = Relationship.where("project_id = ? and follower_id= ?", @project.id, @user.id)
+    @relationship = Relationship.where("project_id = ? and user_id= ?", @project.id, @user.id)
     @relationship.first.destroy
 
     redirect_to peoples_project_path(@project)
@@ -92,7 +88,7 @@ class ProjectsController < ApplicationController
     if @project.nil?
       redirect_to access_url
     elsif @project.user_id != current_user.id
-      @relationship = Relationship.where("project_id = ? and follower_id = ?", @project.id, current_user.id)
+      @relationship = Relationship.where("project_id = ? and user_id = ?", @project.id, current_user.id)
       @follower = @relationship.first if !@relationship.nil?
       if @follower.nil?
         redirect_to access_url

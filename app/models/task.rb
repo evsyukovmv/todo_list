@@ -17,6 +17,8 @@ class Task < ActiveRecord::Base
 
   symbolize :state, :in => [:"Not done", :"In process", "Done"], :scopes => true, :i18n => false
 
+  validates :name, :presence => true
+
   belongs_to :task_list
   belongs_to :user, :foreign_key => :performer_id
 end

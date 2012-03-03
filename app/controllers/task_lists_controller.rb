@@ -55,7 +55,7 @@ class TaskListsController < ApplicationController
     if @task_list.save
       @project.nil? ? redirect_to(task_lists_path) : redirect_to(project_task_lists_path)
     else
-      render action: "new"
+      render 'new'
     end
   end
 
@@ -69,7 +69,7 @@ class TaskListsController < ApplicationController
     if @task_list.update_attributes(params[:task_list])
       redirect_to [@project, @task_list], notiece: 'Task list was successfully updated.'
     else
-      render(action: edit)
+      render 'edit'
     end
   end
 
