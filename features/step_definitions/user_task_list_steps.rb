@@ -20,8 +20,8 @@ end
 
 When /^I update task list with valid data$/ do
   visit root_path
-  task_list = valid_other_task_list.merge
-  udpate_task_list task_list
+  task_list = valid_other_task_list
+  update_task_list task_list
 end
 
 Then /^I see successful update task list message$/ do

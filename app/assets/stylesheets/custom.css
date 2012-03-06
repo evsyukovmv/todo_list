@@ -30,7 +30,7 @@ body{
 }
 #flash_success{
     color: #468847;
-    background-color: #DFF0D8;
+    font-size: 15px;
     border-color: #D6E9C6;
     border-radius: 4px 4px 4px 4px;
     margin-bottom: 18px;
@@ -133,7 +133,7 @@ body{
   width: 100%;
 }
 
-.well input[type="text"], textarea, select{
+.well input[type="text"], .well textarea, .well select, .well input[type="password"]{
    width: 100%;
 }
 

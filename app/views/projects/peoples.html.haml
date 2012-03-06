@@ -1,14 +1,29 @@
-= link_to "Invite", invite_project_url(@project)
-%ul
-  %li
-    %b
-      = @owner.name
-    \-
-    = @owner.email
-  - @peoples.each do |people|
-    %li
-      %b
-        = people.name
-      \-
-      = people.email
-      = link_to 'Destroy', project_path+'/rempeople/'+people.id.to_s, confirm: 'Are you sure?', method: :delete
+.row
+  .span4.offset2
+    %h2
+      Peoples of
+      = @project.name
+  .span4.offset2
+    = link_to "Invite other user", invite_project_url(@project), class: 'label label-success'
+.row
+  .span8.offset2
+    %table.table.table-striped
+      %tbody
+        %tr
+          %td
+            %i
+              = @owner.name
+          %td
+            = @owner.email
+          %td
+            %b
+              Owner
+      - @peoples.each do |people|
+        %tr
+          %td
+            %i
+              = people.name
+          %td
+            = people.email
+          %td
+            = link_to 'Destroy', project_path+'/rempeople/'+people.id.to_s, confirm: 'Are you sure?', method: :delete

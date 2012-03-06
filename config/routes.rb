@@ -30,7 +30,7 @@ TodoList::Application.routes.draw do
   end
 
   resources :users
-
+  match '/profile', :to => 'users#edit'
   root :to => 'pages#home'
 
 end

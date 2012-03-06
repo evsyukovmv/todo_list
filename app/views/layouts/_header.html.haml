@@ -6,6 +6,7 @@
         - if signed_in?
           = link_to "Projects", projects_path, class: 'btn'
           = link_to "Task lists", task_lists_path, class: 'btn'
+          = link_to "Profile", '/profile', class: 'btn'
           = link_to "Sign out", signout_path, :method => :delete, class: 'btn'
         - else
           = link_to "Sign in", signin_path, class: 'btn'

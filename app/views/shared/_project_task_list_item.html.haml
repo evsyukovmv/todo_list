@@ -1,6 +1,11 @@
-%h3
-  Projects
-= render 'shared/projects_item'
-%h3
-  Task lists out the projects
-= render 'shared/task_lists_item'
+- if @projects_item.count == 0 and @task_lists_item.count == 0
+  %h3
+    You do not have list of projects, create them by clicking the Create button at the top right!
+- else
+  %h3
+    Projects
+  = render 'shared/projects_item'
+  %h3
+    Task lists out the projects
+  = render 'shared/task_lists_item'
+
