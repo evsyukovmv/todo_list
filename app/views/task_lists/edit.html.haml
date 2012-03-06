@@ -1,11 +1,5 @@
-%h1
-  Editing task list
-= render 'form'
-- if !@project.nil?
-  = link_to 'Show', [@project, @task_list]
-  |
-  = link_to 'Back', project_task_lists_path
-- else
-  = link_to 'Show', @task_list
-  |
-  = link_to 'Back', task_lists_path
+.row
+  .span6.offset3
+    %h2
+      Editing task list
+    = render 'form'

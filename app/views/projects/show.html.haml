@@ -1,7 +1,9 @@
-%h1
-  = @project.name
-%p
-  = @project.description
-= link_to 'Edit', edit_project_path(@project)
-|
-= link_to 'Back', projects_path
+.row
+  .span8.offset2
+    %h3
+      = @project.name
+    %p
+      = @project.description
+    %p
+      = link_to 'Edit', edit_project_path(@project), class: 'btn btn-info'
+      = link_to 'Back', projects_path, class: 'btn'

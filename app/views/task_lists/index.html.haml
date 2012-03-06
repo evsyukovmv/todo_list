@@ -1,8 +1,11 @@
-%h2
-  All task lists
+%h3
+  Task lists
   - if !@project.nil?
     of project
     = @project.name
+- if !@project.nil?
+  %p
+    = @project.description
 #task_list
   = render('shared/task_lists_item')
 - if !@project.nil?

@@ -1,23 +1,46 @@
-#state
-  = link_to 'All', task_list_tasks_url
-  = link_to 'Done', task_list_tasks_url+'/done'
-  = link_to 'In process', task_list_tasks_url+'/inprocess'
-  = link_to 'Not done', task_list_tasks_url+'/notdone'
-%h1
-  All tasks of
-  = @task_list.name
-%ul#task
-  - @tasks.each do |task|
-    = content_tag :li, :class => "task_#{task.state == :'Done' ? 'done' : 'not_done'}" do
-      %span.name
-        = task.name
-      \-
-      %span.description
-        = task.description
-      = content_tag :span, :class => "priority_#{ task.priority>4 ? 'high' : task.priority>2 ? 'middle' : 'low' }" do
-        = task.priority
-      = task.user.name if !task.user.nil?
-      = link_to "#{task.state}", change_state_task_list_task_url(@task_list, task)
-      = link_to 'Edit', edit_task_list_task_url(@task_list, task)
-      = link_to 'Destroy', [@task_list, task], confirm: 'Are you sure?', method: :delete
-= link_to 'New task', new_task_list_task_path
+.row
+  .span4.offset2
+    %h2
+      All tasks of
+      = @task_list.name
+  .span4.task_menu
+    = link_to 'All', task_list_tasks_url
+    = link_to 'Done', task_list_tasks_url+'/done'
+    = link_to 'In process', task_list_tasks_url+'/inprocess'
+    = link_to 'Not done', task_list_tasks_url+'/notdone'
+.row
+  .span8.offset2
+    %table.table.table-striped
+      %thead
+        %tr
+          %th
+            Name
+          %th
+            Description
+          %th
+            Priority
+          %th
+            Performance
+          %th
+            Operations
+      - @tasks.each do |task|
+        = content_tag :tr, :class => "task_#{task.state == :'Done' ? 'done' : 'not_done'}" do
+          %td
+            %i
+              = task.name
+          %td
+            = task.description
+          = content_tag :td, :class => "priority_#{ task.priority>4 ? 'high' : task.priority>2 ? 'middle' : 'low' }" do
+            = task.priority>4 ? 'High' : task.priority>2 ? 'Middle' : 'Low'
+            = '('+task.priority.to_s+')'
+          %td
+            =  !task.user.nil?? task.user.name : task.task_list.user.name
+          %td.operations
+            %i.icon-flag
+            = link_to "#{task.state}", change_state_task_list_task_url(@task_list, task)
+            %br
+            %i.icon-edit
+            = link_to 'Edit', edit_task_list_task_url(@task_list, task)
+            %br
+            %i.icon-remove
+            = link_to 'Destroy', [@task_list, task], confirm: 'Are you sure?', method: :delete

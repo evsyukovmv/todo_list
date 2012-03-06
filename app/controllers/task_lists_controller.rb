@@ -53,6 +53,7 @@ class TaskListsController < ApplicationController
     end
 
     if @task_list.save
+      flash[:success] = "Task list created!"
       @project.nil? ? redirect_to(task_lists_path) : redirect_to(project_task_lists_path)
     else
       render 'new'

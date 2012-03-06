@@ -1,28 +1,25 @@
-= form_for [@task_list, @task] do |f|
-  - if @task.errors.any?
-    #error_explanation
-      %h2
-        = pluralize(@task.errors.count, "error")
-        prohibited this task list from being saved:
-      %ul
+- if @task.errors.any?
+  #error_explanation
+    %b
+      = pluralize(@task.errors.count, "error")
+    %p
+      There were problems with the following fields:
+    %ul
       - @task.errors.full_messages.each do |msg|
         %li
           = msg
+= form_for([@task_list, @task], html: {class: 'well'}) do |f|
   .field
     = f.label :name
-    %br
     = f.text_field :name
   .field
     = f.label :description
-    %br
     = f.text_area :description
   .field
     = f.label :priority
-    %br
     = f.select :priority, 0..6
-  = @performers.nil?
   - if !@performers.nil?
     = f.label :performer_id
     = f.select :performer_id, options_from_collection_for_select(@performers, 'id', 'name')
   .actions
-    = f.submit
+    = f.submit(class: 'btn-primary')

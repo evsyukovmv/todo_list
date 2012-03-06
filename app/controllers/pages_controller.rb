@@ -5,6 +5,9 @@ class PagesController < ApplicationController
       @user = current_user
       @projects_item = current_user.projects
       @task_lists_item = current_user.task_lists.where("project_id IS NULL")
+    else
+      @user = User.new
+      @title = "Sign up"
     end
   end
 

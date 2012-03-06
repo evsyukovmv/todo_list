@@ -7,7 +7,7 @@ When /^I sign up with valid user data$/ do
 end
 
 Then /^I should see user menu$/ do
-  ["Todo list", "Home", "Projects", "Task lists", "Sign out"].each do |menu|
+  ["Home", "Projects", "Task lists", "Sign out"].each do |menu|
     page.should have_content menu
   end
 end

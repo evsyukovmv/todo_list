@@ -1,13 +1,11 @@
 #signin
-  = form_for(:session, :url => sessions_path) do |f|
+  = form_for(:session, url: sessions_path, class: 'well') do |f|
     .field
       = f.label :email
-      %br
       = f.text_field :email
     .field
       = f.label :password
-      %br
       = f.password_field :password
     .actions
-      = f.submit "Sign in"
+      = f.submit "Sign in", class: 'btn-success'
       = link_to "Sign up now!", signup_path, :class => "signup"

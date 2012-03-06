@@ -1,244 +1,145 @@
-.container {
-  width: 710px;
+body{
+    background: url('/assets/bg.png');
 }
-
-body {
-  background: #0047A2;
+.signup{
+    margin-left: 90px;
 }
-
-header {
-  padding-top: 20px;
-}
-
-header img {
-  padding: 1em;
-  background: #fff;
-}
-
-section {
-  margin-top: 1em;
-  font-size: 120%;
-  padding: 20px;
-  background: #fff;
-  margin: 0 40px;
-}
-
-section h1 {
-  font-size: 200%;
-}
-
-/* Links */
-
-a {
-  color: #09c;
-  text-decoration: none;
-}
-
-a:hover {
-  color: #069;
-  text-decoration: underline;
-}
-
-a:visited {
-  color: #069;
-}
-
-/* Navigation */
-
-nav {
-  float: right;
-  margin-right: 40px;
-}
-
-nav {
-  background-color: white;
-  padding: 0 0.7em;
-  white-space: nowrap;
-}
-
-nav ul {
-  margin: 0;
-  padding: 0;
-}
-
-nav ul li {
-  list-style-type: none;
-  display: inline-block;
-  padding: 0.2em 0;
-}
-
-nav ul li a {
-  padding: 0 5px;
-  font-weight: bold;
-}
-
-nav ul li a:visited {
-  color: #09c;
-}
-
-nav ul li a:hover {
-  text-decoration: underline;
-}
-
-/* Sign up button */
-
-a.signup_button {
-  margin-left: auto;
-  margin-right: auto;
-  display: block;
-  text-align: center;
-  width: 190px;
-  color: #fff;
-  background: #006400;
-  font-size: 150%;
-  font-weight: bold;
-  padding: 20px;
-}
-
-a.signup {
-    margin-left: 100px;
-}
-
-#signin{
-    width: 280px;
+.title{
+    width: 580px;
     margin: 0 auto;
+    padding-bottom: 20px;
 }
-
-/* Round corners */
-
-.round {
-  -moz-border-radius:    10px;
-  -webkit-border-radius: 10px;
-  border-radius:         10px;
+.menu li{
+    float: left;
+    margin-right: 10px;
+    list-style: none;
 }
-
-footer {
-  text-align: center;
-  margin-top: 10px;
-  width: 710px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-footer nav {
-  float: none;
-}
-
-#flash_error{
-    font-weight: bold;
-    color: #ff0000;
-
-}
-
-
-
-#task_list .item{
-    margin-bottom: 20px;
-    background-color: #FEFFA6;
-    padding: 10px;
-}
-
-#project .item{
-    margin-bottom: 20px;
-    background-color: #fbe3e4;
-    padding: 10px;
-}
-
-#task_list .name{
-    font-size: 16px;
-    font-weight: bold;
-    margin: 0 0 10px 0;
-}
-
-#project .name{
-    font-size: 16px;
-    font-weight: bold;
-    margin: 0 0 10px 0;
-}
-
-#task_list .name a{
-    color: #222;
-    text-decoration: underline;
-}
-
-#project .name a{
-    color: #222;
-    text-decoration: underline;
-}
-
-#task_list .description{
-    font-size: 14px;
-    margin: 0 0 10px 0;
-}
-
-#task .task_done{
-    color: #999;
-    text-decoration: line-through;
-}
-
-#task .not_done{
-    color: #333;
-}
-
-#task .name{
-    font-weight: bold;
-}
-
-#task .priority_low{
-    color: #006600;
-}
-#task .priority_middle{
-    color: #ffd324;
-}
-#task .priority_high{
-    color: #990000;
-}
-
-#state{
+.menu{
+    margin-bottom: 10px;
+    margin-top: 10px;
     float: right;
 }
-
-#state a{
-    text-decoration: underline;
+#flash_error{
+    color: #B94A48;
+    font-size: 15px;
+    border-radius: 4px 4px 4px 4px;
+    margin-bottom: 18px;
+    padding: 8px 35px 8px 14px;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+    border-color: #EED3D7;
+}
+#flash_success{
+    color: #468847;
+    background-color: #DFF0D8;
+    border-color: #D6E9C6;
+    border-radius: 4px 4px 4px 4px;
+    margin-bottom: 18px;
+    padding: 8px 35px 8px 14px;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
-.field_with_errors {
-  margin-top: 10px;
-  padding: 2px;
-  background-color: red;
-  display: table;
+.task_menu{
+    float: right;
+    font-size: 14px;
+}
+.task_menu a{
+    padding-right: 3px;
+}
+
+
+.flash_msg{
+    margin-bottom: 10px;
+}
+
+.field_with_errors input {
+    color: #b94a48;
+    border-color: #b94a48;
 }
 
 .field_with_errors label {
-  color: #fff;
+    color: #b94a48;
 }
 
 #error_explanation {
-  width: 400px;
-  border: 2px solid red;
-  padding: 7px;
-  padding-bottom: 12px;
-  margin-bottom: 20px;
-  background-color: #f0f0f0;
+    margin-bottom: 5px;
 }
 
-#error_explanation h2 {
-  text-align: left;
-  font-weight: bold;
-  padding: 5px 5px 5px 15px;
-  font-size: 12px;
-  margin: -7px;
-  background-color: #c00;
-  color: #fff;
+#error_explanation b {
+    color: #b94a48;
 }
 
 #error_explanation p {
-  color: #333;
-  margin-bottom: 0;
-  padding: 5px;
+    color: #333;
+    margin-bottom: 0;
+    padding: 5px;
 }
 
 #error_explanation ul li {
-  font-size: 12px;
-  list-style: square;
+    font-size: 12px;
+    list-style: square;
+}
+
+.page_menu{
+    padding-left: 25px;
+}
+.page_menu a{
+    color: #333;
+}
+.fl_left{
+    float: left;
+}
+.dropdown-menu li{
+    float: none;
+}
+.dropdown-menu{
+    min-width: 0;
+}
+
+#project .item{
+    background: #FAFAD2;
+}
+
+#task_list .item{
+    background: #F8F8FF;
+}
+
+.item{
+    border-radius: 4px 4px 4px 4px;
+    border: 1px solid #DDDDDD;
+    padding: 10px 10px 10px 10px;
+    width: 100%;
+    margin-bottom: 10px;
+    min-height: 73px;
+}
+
+.item .name{
+    font-size: 18px;
+    margin-bottom: 3px;
+}
+
+.operations{
+    font-size: 12px;
+    text-align: right;
+    border-top: 1px solid #DDDDDD;
+    margin-top: 15px;
+}
+.operations a{
+    color: #000;
+}
+
+
+
+#project_task_list_items{
+  width: 100%;
+}
+
+.well input[type="text"], textarea, select{
+   width: 100%;
+}
+
+tr.task_done td i{
+    text-decoration: line-through;
+}
+tr.task_done td{
+    color: #666;
 }

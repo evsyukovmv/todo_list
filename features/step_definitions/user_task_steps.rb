@@ -26,7 +26,7 @@ When /^I destroy task$/ do
   visit root_path
   find('#task_list').click_link('Tasks')
   page.evaluate_script('window.confirm = function() { return true; }')
-  find('#task').click_link('Destroy')
+  find('.operations').click_link('Destroy')
 end
 
 Then /^I see successful destroy task message$/ do
@@ -40,13 +40,13 @@ end
 When /^I change state of task$/ do
   visit root_path
   find('#task_list').click_link('Tasks')
-  find('#task').find('a', :href => /change_state/i).click
+  find('.operations').find('a', :href => /change_state/i).click
 end
 
 Then /^I see task is in process$/ do
   visit root_path
   find('#task_list').click_link('Tasks')
-  within('#task') do
+  within('.operations') do
     page.should have_content('In process')
   end
 end
@@ -54,7 +54,7 @@ end
 Then /^I see task is done$/ do
   visit root_path
   find('#task_list').click_link('Tasks')
-  within('#task') do
+  within('.operations') do
     page.should have_content('Done')
   end
 end
@@ -62,7 +62,7 @@ end
 Then /^I see task id not done$/ do
   visit root_path
   find('#task_list').click_link('Tasks')
-  within('#task') do
+  within('.operations') do
     page.should have_content('Not done')
   end
 end
@@ -95,7 +95,8 @@ When /^I create task with valid data assign to other user in task list in projec
   find('#task_list').click_link('Tasks')
   user_other = valid_other_user
   task = valid_task
-  click_link 'New task'
+  find('.menu').find('.dropdown-toggle').click
+  click_link('Task')
   fill_in "Name", with: task[:name]
   fill_in "Description", with: task[:description]
   select user_other[:name], from: 'Performer'

@@ -1,15 +1,14 @@
 When /^I create project with valid data$/ do
-  visit root_path
   create_project valid_project
 end
 
 Then /^I see successful create project message$/ do
-  page.should have_content "my project"
-  page.should have_content "my project description"
+  project = valid_project
+  page.should have_content project[:name]
+  page.should have_content project[:description]
 end
 
 When /^I create project with invalid data$/ do
-  visit root_path
   project = valid_project.merge(name: "")
   create_project project
 end
@@ -19,24 +18,19 @@ Then /^I see an invalid create project messages$/ do
 end
 
 When /^I update project with valid data$/ do
-  visit root_path
-  find('#project').click_link('Edit')
-  fill_in "Name", with: "another_name"
-  fill_in "Description", with: "another_description"
-  click_button "Update Project"
+  project = valid_other_project
+  update_project project
 end
 
 Then /^I see successful update project message$/ do
-  page.should have_content "another_name"
-  page.should have_content "another_description"
+  project = valid_other_project
+  page.should have_content project[:name]
+  page.should have_content project[:description]
 end
 
 When /^I update project with invalid data$/ do
-  visit root_path
-  find('#project').click_link('Edit')
-  fill_in "Name", with: ""
-  fill_in "Description", with: ""
-  click_button "Update Project"
+  project = valid_project.merge(name: "")
+  update_project project
 end
 
 Then /^I see an invalid update project messages$/ do
@@ -51,28 +45,26 @@ end
 
 Then /^I see successful destroy project message$/ do
   visit root_path
-  page.should_not have_content "my project"
-  page.should_not have_content "my project description"
+  project = valid_project
+  page.should_not have_content project[:name]
+  page.should_not have_content project[:description]
 end
 
 When /^I create and invite other user to project$/ do
-  visit '/signout'
   user = valid_user
   user_other = valid_other_user
+  step 'I am not logged in'
   sign_up user_other
-  visit '/signout'
+  step 'I am not logged in'
   sign_in user
-  find('#project').click_link('Peoples')
-  click_link 'Invite'
-  fill_in 'email', with: user_other[:email]
-  click_button 'Invite to project'
+  invite_user user_other
 end
 
 Then /^I see invited user in project$/ do
-  page.should have_content 'User was successfully added to project.'
-  visit '/signout'
   user = valid_user
   user_other = valid_other_user
+  page.should have_content 'User was successfully added to project.'
+  step 'I am not logged in'
   sign_in user
   find('#project').click_link('Peoples')
   page.should have_content user_other[:name]
@@ -80,10 +72,10 @@ Then /^I see invited user in project$/ do
 end
 
 Then /^Other user can see my project$/ do
-  visit '/signout'
   user_other = valid_other_user
-  sign_in user_other
   project = valid_project
+  step 'I am not logged in'
+  sign_in user_other
   page.should have_content project[:name]
   page.should have_content project[:description]
 end

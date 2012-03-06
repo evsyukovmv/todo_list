@@ -55,16 +55,21 @@ class ProjectsController < ApplicationController
     if !params[:email].nil? and !params[:id].nil?
       @invited_user = User.find_by_email(params[:email])
       @project = Project.find(params[:id])
-      redirect_to invite_project_url(@project), notice: 'No such user.' if @invited_user.nil?
+      if @invited_user.nil?
+        flash[:error] = 'No such user.'
+        redirect_to invite_project_url(@project)
+      end
       if !@project.nil? and !@invited_user.nil?
         @relationship = Relationship.new
         @relationship.user_id = @invited_user.id
         @relationship.project_id = @project.id
         if @relationship.save
           Mailer.invite(@invited_user, @project.name).deliver
-          redirect_to invite_project_url(@project), notice: 'User was successfully added to project.'
+          flash[:success] = 'User was successfully added to project.'
+          redirect_to invite_project_url(@project)
         else
-          redirect_to invite_project_url(@project), notice: 'Error add user to project.'
+          flash[:error] = 'Error add user to project.'
+          redirect_to invite_project_url(@project)
         end
       end
     end
