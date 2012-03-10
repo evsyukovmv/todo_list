@@ -1,5 +1,7 @@
 class ProjectsController < ApplicationController
+
   before_filter :authorized_user, except: [:index, :create, :new]
+
   def index
     @projects_item = current_user.projects
     @title = "All projects"
@@ -12,17 +14,20 @@ class ProjectsController < ApplicationController
 
   def new
     @project = Project.new
+    @title = 'New project'
   end
 
   def edit
     @project = Project.find(params[:id])
+    @title = 'Edit project '+@project.name
   end
 
   def create
     @project = Project.new(params[:project])
     @project.user_id = current_user.id
     if @project.save
-      redirect_to @project, notice: 'Project was successfully created.'
+      flash[:success] =  'Project was successfully created.'
+      redirect_to @project
     else
       render action: "new"
     end
@@ -31,7 +36,8 @@ class ProjectsController < ApplicationController
   def update
     @project = Project.find(params[:id])
     if @project.update_attributes(params[:project])
-      redirect_to @project, notice: 'Project was successfully updated.'
+      flash[:success] = 'Project was successfully updated.'
+      redirect_to @project
     else
       render 'edit'
     end
@@ -40,7 +46,7 @@ class ProjectsController < ApplicationController
   def destroy
     @project = Project.find(params[:id])
     @project.destroy
-
+    flash[:success] = 'Project was successfully destroyed.'
     redirect_to projects_path
   end
 
@@ -49,20 +55,20 @@ class ProjectsController < ApplicationController
     @owner = @project.user
     @relationship = Relationship.where("project_id = ?", @project.id)
     @peoples = @relationship.map{ |relation| User.find_by_id(relation.user_id)}
+    @title = "Peoples of "+@project.name
   end
 
   def invite
-    if !params[:email].nil? and !params[:id].nil?
+    if params[:email] and params[:id]
       @invited_user = User.find_by_email(params[:email])
       @project = Project.find(params[:id])
       if @invited_user.nil?
         flash[:error] = 'No such user.'
         redirect_to invite_project_url(@project)
       end
-      if !@project.nil? and !@invited_user.nil?
-        @relationship = Relationship.new
-        @relationship.user_id = @invited_user.id
-        @relationship.project_id = @project.id
+
+      if @project and @invited_user
+        @relationship = Relationship.new(user_id: @invited_user.id, project_id: @project.id)
         if @relationship.save
           Mailer.invite(@invited_user, @project.name).deliver
           flash[:success] = 'User was successfully added to project.'
@@ -72,8 +78,9 @@ class ProjectsController < ApplicationController
           redirect_to invite_project_url(@project)
         end
       end
+    else
+      flash[:error] = 'Expected user and project.'
     end
-
   end
 
   def rempeople
