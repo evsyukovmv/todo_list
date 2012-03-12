@@ -3,21 +3,19 @@ TodoList::Application.routes.draw do
   match '/signup',  :to => 'users#new'
   match '/signin', :to => 'sessions#new'
   match '/signout', :to => 'sessions#destroy'
+  match '/profile', :to => 'users#edit'
   match '/access', :to => 'pages#access'
-
   match '/task_lists/:task_list_id/tasks/:state' => 'tasks#index', state: /(done|inprocess|notdone)/
-  match '/task_lists/:task_list_id/tasks/:state' => 'tasks#index', state: /(done|inprocess|notdone)/
-
-  match '/projects/:project_id/rempeople/:id' => 'projects#rempeople'
+  match '/projects/:id/remove_user/:user_id' => 'projects#remove_user', as: 'remove_user_project'
 
   resources :sessions, :only => [:new, :create, :destroy]
 
   resources :projects do
     resources :task_lists, :only => [:index, :new, :create, :destroy]
     member do
-      get 'peoples'
+      get 'users'
       get 'invite'
-      post 'invite'
+      post 'add_user'
     end
   end
 
@@ -30,7 +28,7 @@ TodoList::Application.routes.draw do
   end
 
   resources :users
-  match '/profile', :to => 'users#edit'
+
   root :to => 'pages#home'
 
 end

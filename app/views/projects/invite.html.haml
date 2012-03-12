@@ -1,6 +1,6 @@
 .row
   .span3.offset4
-    =  form_tag(invite_project_url(@user), :method => :post, class: 'well') do
+    =  form_tag(add_user_project_url(@user), :method => :post, class: 'well') do
       = label_tag 'Enter email for invite: '
       = email_field_tag 'email'
       = button_tag "Invite to project", class: 'btn'

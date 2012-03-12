@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe ProjectsController do
   before(:each) do
-    @user = mock_model(User, email: 'email@email.com', save: true)
+    @user = mock_model(User, name: 'user name', email: 'email@email.com', save: true)
     @project =  mock_model(Project,  id: 1, name: 'name', save: true)
 
     @user.stub!(:projects).and_return @project
@@ -73,31 +73,32 @@ describe ProjectsController do
   it "should redirect if destroyed" do
     @project.stub!(:destroy)
     get :destroy, id: @project.id
-    flash[:success].should == 'Project was successfully destroyed.'
+    flash[:success].should == 'Project '+@project.name+' was successfully destroyed.'
     response.should be_redirect
   end
 
   it "should render peoples of project list" do
-    @project.stub!(:user).and_return 1
-    get :peoples, id: @project.id
+    @project.stub!(:users).and_return [@user]
+    get :users, id: @project.id
     assigns(:title).should == "Peoples of "+@project.name
-    response.should render_template(:peoples)
+    response.should render_template(:users)
   end
 
-  it "should invite valid users to project" do
-    post :invite, {id: @project.id, email: @user.email}
+  it "should render invite project" do
+    get :invite, id: @project.id
+    assigns(:title).should == 'Invite to '+@project.name
+    response.should render_template(:invite)
+  end
+
+  it "should add valid users to project" do
+    post :add_user, {id: @project.id, email: @user.email}
     flash[:success].should == 'User was successfully added to project.'
     response.should be_redirect
   end
 
-  it "should show error if invite without email" do
-    post :invite, {id: @project.id, email: nil}
-    flash[:error].should == 'Expected user and project.'
-  end
-
   it "should show error if user not found in database" do
     User.stub!(:find_by_email).and_return nil
-    post :invite, {id: @project.id, email: @user.email}
+    post :add_user, {id: @project.id, email: @user.email}
     flash[:error].should == 'No such user.'
     response.should be_redirect
   end
@@ -105,7 +106,7 @@ describe ProjectsController do
   it "should show error if relation not saved" do
     User.stub!(:find_by_email).and_return @user
     Relationship.stub!(:new).and_return mock_model(Relationship, save: false)
-    post :invite, {id: @project.id, email: @user.email}
+    post :add_user, {id: @project.id, email: @user.email}
     flash[:error].should == 'Error add user to project.'
     response.should be_redirect
   end
@@ -116,8 +117,12 @@ describe ProjectsController do
     Relationship.stub!(:where).and_return relationship
     relationship.stub!(:first).and_return relationship
     relationship.stub!(:destroy)
-    get :rempeople, {id: @user.id, project_id: @project.id}
+    get :remove_user, {id: @project.id, user_id: @user.id}
     response.should be_redirect
+  end
+
+  it "should call authorized before each action" do
+
   end
 
 end

@@ -26,4 +26,4 @@
           %td
             = people.email
           %td
-            = link_to 'Destroy', project_path+'/rempeople/'+people.id.to_s, confirm: 'Are you sure?', method: :delete
+            = link_to 'Destroy', remove_user_project_path(@project, people), confirm: 'Are you sure?', method: :delete

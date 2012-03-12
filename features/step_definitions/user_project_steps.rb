@@ -67,8 +67,8 @@ Then /^I see invited user in project$/ do
   step 'I am not logged in'
   sign_in user
   find('#project').click_link('Peoples')
-  page.should have_content user_other[:name]
-  page.should have_content user_other[:email]
+  find('.table-striped').should have_content user_other[:name]
+  find('.table-striped').should have_content user_other[:email]
 end
 
 Then /^Other user can see my project$/ do
@@ -78,4 +78,15 @@ Then /^Other user can see my project$/ do
   sign_in user_other
   page.should have_content project[:name]
   page.should have_content project[:description]
+end
+
+When /^I remove user from project$/ do
+  page.evaluate_script('window.confirm = function() { return true; }')
+  click_link('Destroy')
+end
+
+Then /^I do not see removed invited user in project$/ do
+  user_other = valid_other_user
+  find('.table-striped').should_not have_content user_other[:name]
+  find('.table-striped').should_not have_content user_other[:email]
 end

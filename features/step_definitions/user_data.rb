@@ -5,7 +5,7 @@ def valid_user
 end
 
 def valid_other_user
-  @user ||= { :name => "Test Other User", :email => "test_other@example.com",
+  @user_other ||= { :name => "Test Other User", :email => "test_other@example.com",
               :password => "password", :password_confirmation => "password"}
 end
 

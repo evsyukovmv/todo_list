@@ -31,3 +31,9 @@ Feature: Project
     When I create and invite other user to project
     Then I see invited user in project
     And Other user can see my project
+
+  Scenario: User can remove invited users from project
+    When I create and invite other user to project
+    Then I see invited user in project
+    When I remove user from project
+    Then I do not see removed invited user in project
