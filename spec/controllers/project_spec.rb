@@ -7,11 +7,8 @@ describe ProjectsController do
 
     @user.stub!(:projects).and_return @project
     @project.stub!(:user_id=)
-
-
+    @project.stub!(:users).and_return [@user]
     controller.stub!(:current_user).and_return @user
-    controller.stub!(:authorized_user)
-
     User.stub!(:find_by_email).and_return @user
 
     Project.stub!(:find).and_return @project
@@ -45,7 +42,7 @@ describe ProjectsController do
   it "should create project with valid data" do
     post :create, project: @project
     flash[:success].should == 'Project was successfully created.'
-    response.should be_redirect
+    response.should redirect_to @project
   end
 
   it "should render new while create project with wrong data" do
@@ -61,7 +58,7 @@ describe ProjectsController do
     @project.stub!(:update_attributes).and_return true
     post :update, id: @project.id
     flash[:success].should == 'Project was successfully updated.'
-    response.should be_redirect
+    response.should redirect_to @project
   end
 
   it "should render edit until create project with wrong data" do
@@ -78,7 +75,6 @@ describe ProjectsController do
   end
 
   it "should render peoples of project list" do
-    @project.stub!(:users).and_return [@user]
     get :users, id: @project.id
     assigns(:title).should == "Peoples of "+@project.name
     response.should render_template(:users)
@@ -93,14 +89,14 @@ describe ProjectsController do
   it "should add valid users to project" do
     post :add_user, {id: @project.id, email: @user.email}
     flash[:success].should == 'User was successfully added to project.'
-    response.should be_redirect
+    response.should redirect_to invite_project_url(@project)
   end
 
   it "should show error if user not found in database" do
     User.stub!(:find_by_email).and_return nil
     post :add_user, {id: @project.id, email: @user.email}
     flash[:error].should == 'No such user.'
-    response.should be_redirect
+    response.should redirect_to invite_project_url(@project)
   end
 
   it "should show error if relation not saved" do
@@ -108,7 +104,7 @@ describe ProjectsController do
     Relationship.stub!(:new).and_return mock_model(Relationship, save: false)
     post :add_user, {id: @project.id, email: @user.email}
     flash[:error].should == 'Error add user to project.'
-    response.should be_redirect
+    response.should redirect_to invite_project_url(@project)
   end
 
   it "should remove peoples from project" do
@@ -118,11 +114,19 @@ describe ProjectsController do
     relationship.stub!(:first).and_return relationship
     relationship.stub!(:destroy)
     get :remove_user, {id: @project.id, user_id: @user.id}
-    response.should be_redirect
+    response.should redirect_to users_project_path(@project)
   end
 
-  it "should call authorized before each action" do
+  it "should return redirect_to access_url in authorized method if not signed in" do
+    controller.stub!(:current_user).and_return nil
+    get :index
+    response.should redirect_to access_url
+  end
 
+  it "should return redirect to access_url in authorized method if signed but not in project users" do
+    @project.stub_chain(:users, :include?).and_return false
+    get :index
+    response.should redirect_to access_url
   end
 
 end
