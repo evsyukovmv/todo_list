@@ -33,32 +33,28 @@ describe ProjectsController do
   end
 
   it "should render new while create project with wrong data" do
-    invalid_project = @project
-    invalid_project.stub(:save).and_return false
-    Project.stub!(:new).and_return invalid_project
-    invalid_project.stub!(:user_id=)
+    Project.stub!(:new).and_return @project_invalid
     post :create, project: @project
     response.should render_template(:new)
   end
 
   it "should update project with valid data" do
-    @project.stub!(:update_attributes).and_return true
     post :update, id: @project.id
-    flash[:success].should == 'Project was successfully updated.'
+    flash[:success].should == 'Project was successful updated.'
     response.should redirect_to @project
   end
 
   it "should render edit until create project with wrong data" do
-    @project.stub!(:update_attributes).and_return false
-    post :update, id: @project.id
+    Project.stub!(:find).and_return @project_invalid
+    post :update, id: @project_invalid.id
+    flash[:error].should == 'Project not updated.'
     response.should render_template(:edit)
   end
 
   it "should redirect if destroyed" do
-    @project.stub!(:destroy)
     get :destroy, id: @project.id
     flash[:success].should == 'Project '+@project.name+' was successfully destroyed.'
-    response.should be_redirect
+    response.should redirect_to projects_path
   end
 
   it "should render peoples of project list" do

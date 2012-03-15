@@ -1,10 +1,6 @@
 require 'spec_helper'
 
 describe SessionsController do
-  before :each do
-    @user = mock_model(User, save: true)
-    @user.stub!(:password, 'password')
-  end
 
   it "should create current_user with valid data" do
     User.stub!(:authenticate).and_return @user
