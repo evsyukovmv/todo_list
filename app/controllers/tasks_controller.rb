@@ -1,111 +1,92 @@
 class TasksController < ApplicationController
   before_filter :authorized_user
   def index
-    if !params[:project_id].nil?
-      @project = Project.find(params[:project_id])
-      @task_list = @project.task_lists.find(params[:task_list_id])
-    else
-      @task_list = TaskList.find(params[:task_list_id])
-    end
-
+    @task_list = TaskList.find(params[:task_list_id])
     if params[:state] == 'done'
+      @title = "Done"
       @tasks = @task_list.task.where("state = 'Done'").order "id DESC"
     elsif params[:state] == 'inprocess'
+      @title = "In process"
       @tasks = @task_list.task.where("state = 'In process'").order "id DESC"
     elsif params[:state] == 'notdone'
+      @title = "Not done"
       @tasks = @task_list.task.where("state = 'Not done'").order "id DESC"
     else
+      @title = "All"
       @tasks = @task_list.task.order "id DESC"
     end
-    @title = "All tasks"
- end
+    @title += " tasks of "+@task_list.name
+  end
 
- def show
-   if !params[:project_id].nil?
-     @project = Project.find(params[:project_id])
-     @task_list = @project.task_lists.find(params[:task_list_id])
-   else
-     @task_list = TaskList.find(params[:task_list_id])
-   end
+  def show
+    @task_list = TaskList.find(params[:task_list_id])
+    @task = @task_list.task.find(params[:id])
+    @title = @task.name
+  end
 
-   @task = @task_list.task.find(params[:id])
-   @title = @task.name
- end
-
- def new
-     @task_list = TaskList.find(params[:task_list_id])
-     @project = @task_list.project
-     if !@project.nil?
-       @relationship = Relationship.where("project_id = ?", @project.id)
-       @performers = @relationship.map{ |relation| User.find_by_id(relation.user_id)}
-       @performers.unshift(@project.user)
-     end
-
-   @task = @task_list.task.new
+  def new
+    @task_list = TaskList.find(params[:task_list_id])
+    @project = @task_list.project
+    if @project
+      @performers = @project.users if @project.users.count > 1
+    end
+    @task = @task_list.task.new
+    @title = "New task in "+@task_list.name
  end
 
  def edit
    @task_list = TaskList.find(params[:task_list_id])
    @task = @task_list.task.find(params[:id])
    @project = @task_list.project
-   if !@project.nil?
-     @relationship = Relationship.where("project_id = ?", @project.id)
-     @performers = @relationship.map{ |relation| User.find_by_id(relation.user_id)}
-     @performers.unshift(@project.user)
+   if @project
+     @performers = @project.users if @project.users.count > 1
    end
+   @title = "Edit task "+@task.name+" in "+@task_list.name
  end
 
  def create
-   @task = Task.new(params[:task])
-   @task.task_list_id= @task_list.id
-   @project = @task.task_list.project if !@task.task_list.project.nil?
-   Mailer.changed(@task.user, @project.name, @task.name).deliver if !@task.performer_id.nil?
+   @task_list = TaskList.find(params[:task_list_id])
+   @task = @task_list.task.new(params[:task])
+   @project = @task_list.project if @task_list.project
+   Mailer.changed(@task.user, @project.name, @task.name).deliver if @task.performer_id
    if @task.save
-     redirect_to [@task_list, @task], notice: 'Task was successfully created.'
+     flash[:success] = 'Task was successfully created'
+     redirect_to [@task_list, @task]
    else
+     flash[:error] = 'Error task create'
      render 'new'
    end
  end
 
  def update
-   if !params[:project_id].nil?
-     @project = Project.find(params[:project_id])
-     @task_list = @project.task_lists.find(params[:task_list_id])
-   else
-     @task_list = TaskList.find(params[:task_list_id])
-   end
-
+   @task_list = TaskList.find(params[:task_list_id])
+   @project = @task_list.project
    @task = @task_list.task.find(params[:id])
    if @task.update_attributes(params[:task])
-     Mailer.changed(@task.user, @project.name, @task.name).deliver if !@task.performer_id.nil?
-     redirect_to [@task_list, @task], notiece: 'Task was successfully updated.'
+     Mailer.changed(@task.user, @project.name, @task.name).deliver if @task.performer_id
+     flash[:success] = 'Task was successfully updated'
+     redirect_to [@task_list, @task]
    else
+     flash[:error] = 'Error task update'
      render 'edit'
    end
  end
 
  def destroy
-   if !params[:project_id].nil?
-     @project = Project.find(params[:project_id])
-     @task_list = @project.task_lists.find(params[:task_list_id])
-   else
-     @task_list = TaskList.find(params[:task_list_id])
-   end
-
+   @task_list = TaskList.find(params[:task_list_id])
    @task = @task_list.task.find(params[:id])
-   @task.destroy
-
-   @project.nil?? redirect_to(task_list_tasks_path) : redirect_to(task_list_tasks_path)
-
+   if @task.destroy
+     flash[:success] = 'Task '+@task.name+' was successfully destroyed'
+   else
+     flash[:error] = 'Error task destroy'
+   end
+   redirect_to task_list_tasks_path
  end
 
   def change_state
-
     @task_list = TaskList.find(params[:task_list_id])
     @task = @task_list.task.find(params[:id])
-    if !@task_list.project.nil?
-      @project = @task_list.project
-    end
+    @project = @task_list.project if @task_list.project
 
     if @task.state == :"Not done"
       @task.state = :"In process"
@@ -116,47 +97,25 @@ class TasksController < ApplicationController
     end
 
     if @task.save
-      if !@project.nil? and !@task.performer_id.nil?
+      if @project and @task.performer_id
         Mailer.changed(@task.user, @project.name, @task.name).deliver
       end
-      redirect_to task_list_tasks_path, notice: 'Task state was successfully updated.'
+      flash[:success] = 'Task '+@task.name+' state was successfully updated.'
     else
-      if !@project.nil?
-        render task_list_tasks_path
-      else
-        render task_list_tasks_path
-      end
+      flash[:error] = 'Error change task state'
     end
-
+    redirect_to task_list_tasks_path
   end
 
   private
 
   def authorized_user
-    @task_list = TaskList.find(params[:task_list_id])
-    if !params[:id].nil?
-      @task = Task.find(params[:id])
-      if @task.task_list != @task_list
-        redirect_to access_url
-      end
-    elsif !@task_list.user_id.nil?
-      @project = @task_list.project
-      if !@project.nil?
-        if @project.user_id != current_user.id
-          @relationship = Relationship.where("project_id = ? and user_id = ?", @project.id, current_user.id)
-          @follower = @relationship.first if !@relationship.nil?
-          if @follower.nil?
-            redirect_to access_url
-          elsif current_user.id != @follower.user_id
-            redirect_to access_url
-          end
-        end
-      elsif @task_list.user_id != current_user.id
-        redirect_to access_url
-      end
-    else
-      redirect_to access_url
-    end
+    @task_list = TaskList.find(params[:task_list_id]) if params[:task_list_id]
+    @project = @task_list.project if @task_list.project
+
+    return if (@project and @project.users.include?(current_user))
+    return if (@task_list and @task_list.user_id == current_user.id)
+    redirect_to access_url
   end
 
 end

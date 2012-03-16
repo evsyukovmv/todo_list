@@ -100,7 +100,7 @@ class ProjectsController < ApplicationController
   private
 
   def authorized_user
-    @project = Project.find params[:id]
+    @project = Project.find params[:id] if params[:id]
     return if (@project.nil? and signed_in?) or (@project and @project.users.include?(current_user))
     redirect_to access_url
   end

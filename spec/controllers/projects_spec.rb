@@ -108,7 +108,7 @@ describe ProjectsController do
 
   it "should return redirect to access_url in authorized method if signed but not in project users" do
     @project.stub_chain(:users, :include?).and_return false
-    get :index
+    get :index, id: @project.id
     response.should redirect_to access_url
   end
 
