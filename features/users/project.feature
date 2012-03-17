@@ -12,7 +12,7 @@ Feature: Project
     When I create project with valid data
     Then I see successful create project message
 
-  Scenario: User can create project
+  Scenario: User cannot create project with invalid data
     When I create project with invalid data
     Then I see an invalid create project messages
 
