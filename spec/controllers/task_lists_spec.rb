@@ -3,14 +3,14 @@ require 'spec_helper'
 describe TaskListsController do
   it "should assigns all task_lists in project" do
     get :index, project_id: @project.id
-    assigns(:task_lists_item).should == @task_list
+    assigns(:task_lists).should == @task_lists_array
     assigns(:title).should == 'All task lists of project '+@project.name
     response.should render_template(:index)
   end
 
   it "should assigns all task_lists project" do
     get :index
-    assigns(:task_lists_item).should == @task_list
+    assigns(:task_lists).should == @task_lists_array
     assigns(:title).should == 'All task lists'
     response.should render_template(:index)
   end

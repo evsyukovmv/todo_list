@@ -3,7 +3,7 @@ class ProjectsController < ApplicationController
   before_filter :authorized_user
 
   def index
-    @projects_item = current_user.projects
+    @projects = current_user.projects
     @title = "All projects"
   end
 
@@ -26,9 +26,10 @@ class ProjectsController < ApplicationController
     @project = Project.new(params[:project])
     @project.user_id = current_user.id
     if @project.save
-      flash[:success] =  'Project was successfully created.'
+      flash[:success] =  'Project was successfully created'
       redirect_to @project
     else
+      flash[:error] =  'Project create error'
       render action: "new"
     end
   end
@@ -36,18 +37,21 @@ class ProjectsController < ApplicationController
   def update
     @project = Project.find(params[:id])
     if @project.update_attributes(params[:project])
-      flash[:success] = 'Project was successful updated.'
+      flash[:success] = 'Project was successful updated'
       redirect_to @project
     else
-      flash[:error] = 'Project not updated.'
+      flash[:error] = 'Project update error'
       render 'edit'
     end
   end
 
   def destroy
     @project = Project.find(params[:id])
-    flash[:success] = 'Project '+@project.name+' was successfully destroyed.'
-    @project.destroy
+    if @project.destroy
+      flash[:success] = 'Project '+@project.name+' was successfully destroyed'
+    else
+      flash[:error] = 'Project destroy error'
+    end
     redirect_to projects_path
   end
 
@@ -55,7 +59,7 @@ class ProjectsController < ApplicationController
     @project = Project.find(params[:id])
     @peoples = @project.users
     @owner = @peoples.pop
-    @title = "Peoples of "+@project.name
+    @title = "Users of "+@project.name
   end
 
   def add_user
@@ -63,23 +67,23 @@ class ProjectsController < ApplicationController
     @invited_user = User.find_by_email(params[:email]) if params[:email]
 
     if @invited_user.nil?
-      flash[:error] = 'No such user.'
+      flash[:error] = 'Error. No such user'
       return redirect_to invite_project_url(@project)
     end
 
     if @project.nil?
-      flash[:error] = 'No such project.'
-      return redirect_to render projects_url
+      flash[:error] = 'Error. No such project'
+      return redirect_to projects_url
     end
 
     @relationship = Relationship.new(user_id: @invited_user.id, project_id: @project.id)
 
     if @relationship.save
       Mailer.invite(@invited_user, @project.name).deliver
-      flash[:success] = 'User was successfully added to project.'
+      flash[:success] = 'User was successfully added to project'
       redirect_to invite_project_url(@project)
     else
-      flash[:error] = 'Error add user to project.'
+      flash[:error] = 'Error add user to project'
       redirect_to invite_project_url(@project)
     end
   end
@@ -92,8 +96,11 @@ class ProjectsController < ApplicationController
   def remove_user
     @user = User.find_by_id(params[:user_id])
     @project = Project.find(params[:id])
-    flash[:success] = 'User '+@user.name+' was successfully removed from project '+@project.name
-    Relationship.where("project_id = ? and user_id= ?", @project.id, @user.id).first.destroy
+    if @user.relationships.find_by_project_id(@project.id).destroy
+      flash[:success] = 'User '+@user.name+' was successfully removed from project '+@project.name
+    else
+      flash[:error] = 'Error user destroy from project '+@project.name
+    end
     redirect_to users_project_path(@project)
   end
 

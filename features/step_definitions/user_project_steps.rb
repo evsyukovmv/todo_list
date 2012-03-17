@@ -63,9 +63,8 @@ end
 Then /^I see invited user in project$/ do
   user = valid_user
   user_other = valid_other_user
-  page.should have_content 'User was successfully added to project.'
-  step 'I am not logged in'
-  sign_in user
+  page.should have_content 'User was successfully added to project'
+  visit root_path
   find('#project').click_link('Peoples')
   find('.table-striped').should have_content user_other[:name]
   find('.table-striped').should have_content user_other[:email]

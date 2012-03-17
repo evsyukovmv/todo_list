@@ -24,8 +24,8 @@ class UsersController < ApplicationController
 
   def show
     @title = "Project, task lists of "+current_user.name
-    @projects_item = current_user.projects
-    @task_lists_item = current_user.task_lists.where("project_id IS NULL")
+    @projects = current_user.projects
+    @task_lists = current_user.task_lists.where("project_id IS NULL")
   end
 
   def update

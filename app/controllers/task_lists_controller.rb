@@ -5,10 +5,10 @@ class TaskListsController < ApplicationController
     @project = Project.find(params[:project_id]) if params[:project_id]
     if @project
       @title = 'All task lists of project '+@project.name
-      @task_lists_item = @project.task_lists
+      @task_lists = @project.task_lists
     else
       @title = 'All task lists'
-      @task_lists_item = current_user.task_lists.where('project_id IS NULL')
+      @task_lists = current_user.task_lists.where('project_id IS NULL')
     end
   end
 
