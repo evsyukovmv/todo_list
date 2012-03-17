@@ -1,14 +1,12 @@
 class ProjectsController < ApplicationController
 
-  before_filter :authorized_user
-
   def index
     @projects = current_user.projects
     @title = "All projects"
   end
 
   def show
-    @project = Project.find(params[:id])
+    @project = current_user.project params[:id]
     @title = @project.name
   end
 
@@ -18,24 +16,24 @@ class ProjectsController < ApplicationController
   end
 
   def edit
-    @project = Project.find(params[:id])
+    @project = current_user.project params[:id]
     @title = 'Edit project '+@project.name
   end
 
   def create
     @project = Project.new(params[:project])
-    @project.user_id = current_user.id
+    @project.user = current_user
     if @project.save
       flash[:success] =  'Project was successfully created'
       redirect_to @project
     else
       flash[:error] =  'Project create error'
-      render action: "new"
+      render 'new'
     end
   end
 
   def update
-    @project = Project.find(params[:id])
+    @project = current_user.project params[:id]
     if @project.update_attributes(params[:project])
       flash[:success] = 'Project was successful updated'
       redirect_to @project
@@ -46,7 +44,7 @@ class ProjectsController < ApplicationController
   end
 
   def destroy
-    @project = Project.find(params[:id])
+    @project = current_user.project params[:id]
     if @project.destroy
       flash[:success] = 'Project '+@project.name+' was successfully destroyed'
     else
@@ -56,14 +54,14 @@ class ProjectsController < ApplicationController
   end
 
   def users
-    @project = Project.find(params[:id])
+    @project = current_user.project params[:id]
     @peoples = @project.users
     @owner = @peoples.pop
     @title = "Users of "+@project.name
   end
 
   def add_user
-    @project = Project.find(params[:id])
+    @project = current_user.project params[:id]
     @invited_user = User.find_by_email(params[:email]) if params[:email]
 
     if @invited_user.nil?
@@ -89,27 +87,19 @@ class ProjectsController < ApplicationController
   end
 
   def invite
-    @project = Project.find(params[:id])
+    @project = current_user.project params[:id]
     @title = "Invite to "+@project.name
   end
 
   def remove_user
+    @project = current_user.project params[:id]
     @user = User.find_by_id(params[:user_id])
-    @project = Project.find(params[:id])
-    if @user.relationships.find_by_project_id(@project.id).destroy
+    if @project.relationships.find_by_user_id(@user.id).destroy
       flash[:success] = 'User '+@user.name+' was successfully removed from project '+@project.name
     else
       flash[:error] = 'Error user destroy from project '+@project.name
     end
     redirect_to users_project_path(@project)
-  end
-
-  private
-
-  def authorized_user
-    @project = Project.find params[:id] if params[:id]
-    return if (@project.nil? and signed_in?) or (@project and @project.users.include?(current_user))
-    redirect_to access_url
   end
 
 end

@@ -8,6 +8,7 @@ gem 'rails', '3.1.3'
 gem 'haml'
 gem 'sqlite3'
 gem 'therubyracer'
+gem 'state_machine'
 gem "symbolize", :require => "symbolize/active_record"
 
 

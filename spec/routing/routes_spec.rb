@@ -76,7 +76,6 @@ describe "routing to matches" do
       controller: 'projects',
       action: 'remove_user',
       id: '1',
-
       user_id: '2'
     )
   end

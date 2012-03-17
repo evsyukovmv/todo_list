@@ -7,7 +7,7 @@ TodoList::Application.routes.draw do
   match '/signout', :to => 'sessions#destroy'
   match '/profile', :to => 'users#edit'
   match '/access', :to => 'pages#access'
-  match '/task_lists/:task_list_id/tasks/:state' => 'tasks#index', state: /(done|inprocess|notdone)/
+  match '/task_lists/:task_list_id/tasks/:state' => 'tasks#index', state: /(done|in_process|not_done)/
   match '/projects/:id/remove_user/:user_id' => 'projects#remove_user', as: 'remove_user_project'
 
   resources :sessions, :only => [:new, :create, :destroy]

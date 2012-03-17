@@ -13,9 +13,20 @@
 #
 
 class Task < ActiveRecord::Base
+
   attr_accessible :name, :description, :state, :priority, :performer_id
 
-  symbolize :state, :in => [:"Not done", :"In process", :"Done"], :scopes => true, :i18n => false
+  state_machine :state, initial: :not_done do
+    state :not_done
+    state :in_process
+    state :done
+
+    event :change_state do
+      transition done: :not_done
+      transition not_done: :in_process
+      transition in_process: :done
+    end
+  end
 
   validates :name, :presence => true
 

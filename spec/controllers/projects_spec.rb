@@ -13,7 +13,7 @@ describe ProjectsController do
   describe "GET 'index'" do
 
     before(:each) do
-      @projects_array= [@project, @project, @project]
+      @projects_array = [@project, @project, @project]
       @user.stub!(:projects).and_return @projects_array
       get :index
     end
@@ -35,7 +35,7 @@ describe ProjectsController do
   describe "GET 'show' for project" do
 
     before(:each) do
-      Project.stub!(:find).and_return @project
+      @user.stub!(:project).and_return @project
       get :show, id: @project.id
     end
 
@@ -77,7 +77,7 @@ describe ProjectsController do
   describe "GET 'edit'" do
 
     before(:each) do
-      Project.stub!(:find).and_return @project
+      @user.stub!(:project).and_return @project
       get :edit, id: @project.id
     end
 
@@ -101,7 +101,7 @@ describe ProjectsController do
 
       before(:each) do
         Project.stub!(:new).and_return @project
-        @project.stub!(:user_id=)
+        @project.stub!(:user=)
         post :create, project: @project
       end
 
@@ -123,7 +123,7 @@ describe ProjectsController do
 
       before(:each) do
         Project.stub!(:new).and_return @project_invalid
-        @project_invalid.stub!(:user_id=)
+        @project_invalid.stub!(:user=)
         post :create, project: @project
       end
 
@@ -148,7 +148,7 @@ describe ProjectsController do
     describe "update project with valid data" do
 
       before(:each) do
-        Project.stub!(:find).and_return @project
+        @user.stub!(:project).and_return @project
         @project.stub!(:update_attributes).and_return @project
         post :update, id: @project.id
       end
@@ -169,8 +169,7 @@ describe ProjectsController do
 
     describe "update project with invalid data" do
       before(:each) do
-        Project.stub!(:find).and_return @project_invalid
-        @project_invalid.stub!(:users).and_return [@user]
+        @user.stub!(:project).and_return @project_invalid
         @project_invalid.stub!(:update_attributes).and_return false
         post :update, id: @project.id
       end
@@ -195,7 +194,7 @@ describe ProjectsController do
     describe "destroy project with valid data" do
 
       before(:each) do
-        Project.stub!(:find).and_return @project
+        @user.stub!(:project).and_return @project
         @project.stub!(:destroy).and_return @project
         get :destroy, id: @project.id
       end
@@ -217,8 +216,7 @@ describe ProjectsController do
     describe "destroy project with invalid data" do
 
       before(:each) do
-        Project.stub!(:find).and_return @project_invalid
-        @project_invalid.stub!(:users).and_return [@user]
+        @user.stub!(:project).and_return @project_invalid
         @project_invalid.stub!(:destroy).and_return false
         get :destroy, id: @project.id
       end
@@ -242,7 +240,8 @@ describe ProjectsController do
   describe "GET 'users' for project" do
 
     before(:each) do
-      Project.stub!(:find).and_return @project
+      @user.stub!(:project).and_return @project
+      @project.stub(:users).and_return [@user]
       get :users, id: @project.id
     end
 
@@ -263,7 +262,7 @@ describe ProjectsController do
   describe "GET 'invite' for project" do
 
     before(:each) do
-      Project.stub!(:find).and_return @project
+      @user.stub!(:project).and_return @project
       get :invite, id: @project.id
     end
 
@@ -286,8 +285,8 @@ describe ProjectsController do
     describe "add user with valid data" do
 
       before(:each) do
+        @user.stub!(:project).and_return @project
         User.stub!(:find_by_email).and_return @user
-        Project.stub!(:find).and_return @project
         post :add_user, id: @project.id, email: @user.email
       end
 
@@ -312,7 +311,7 @@ describe ProjectsController do
 
       describe "user not found in database" do
         before(:each) do
-          Project.stub!(:find).and_return @project
+          @user.stub!(:project).and_return @project
           User.stub!(:find_by_email).and_return nil
           post :add_user, id: @project.id, email: @user.email
         end
@@ -339,8 +338,8 @@ describe ProjectsController do
 
     describe "project not found in database" do
       before(:each) do
+        @user.stub!(:project).and_return nil
         User.stub!(:find_by_email).and_return @user
-        Project.stub!(:find).and_return nil
         post :add_user, id: @project.id, email: @user.email
       end
 
@@ -364,8 +363,7 @@ describe ProjectsController do
 
     describe "relation not saved" do
       before(:each) do
-        User.stub!(:find_by_email).and_return @user
-        Project.stub!(:find).and_return @project
+        @user.stub!(:project).and_return @project
         User.stub!(:find_by_email).and_return @user
         Relationship.stub!(:new).and_return mock_model(Relationship, save: false)
         post :add_user, id: @project.id, email: @user.email
@@ -396,9 +394,9 @@ describe ProjectsController do
     describe "remove with valid data" do
 
       before(:each) do
-        Project.stub!(:find).and_return @project
+        @user.stub!(:project).and_return @project
         User.stub!(:find_by_id).and_return @user
-        @user.stub_chain(:relationships, :find_by_project_id, :destroy).and_return @project
+        @project.stub_chain(:relationships, :find_by_user_id, :destroy).and_return true
         get :remove_user, id: @project.id, user_id: @user.id
       end
 
@@ -423,9 +421,9 @@ describe ProjectsController do
     describe "remove with invalid data" do
 
       before(:each) do
-        Project.stub!(:find).and_return @project
+        @user.stub!(:project).and_return @project
         User.stub!(:find_by_id).and_return @user
-        @user.stub_chain(:relationships, :find_by_project_id, :destroy).and_return false
+        @project.stub_chain(:relationships, :find_by_user_id, :destroy).and_return false
         get :remove_user, id: @project.id, user_id: @user.id
       end
 
@@ -445,23 +443,6 @@ describe ProjectsController do
         response.should redirect_to users_project_path(@project)
       end
 
-    end
-
-  end
-
-  describe "before filter authorized user" do
-
-    it "should return redirect_to access_url in authorized method if not signed in" do
-      controller.stub!(:current_user).and_return nil
-      get :index
-      response.should redirect_to access_url
-    end
-
-    it "should return redirect to access_url in authorized method if signed but not in project users" do
-      Project.stub!(:find).and_return @project
-      @project.stub_chain(:users, :include?).and_return false
-      get :index, id: @project.id
-      response.should redirect_to access_url
     end
 
   end

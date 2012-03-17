@@ -1,21 +1,10 @@
 class TasksController < ApplicationController
   before_filter :authorized_user
+
   def index
     @task_list = TaskList.find(params[:task_list_id])
-    if params[:state] == 'done'
-      @title = "Done"
-      @tasks = @task_list.task.where("state = 'Done'").order "id DESC"
-    elsif params[:state] == 'inprocess'
-      @title = "In process"
-      @tasks = @task_list.task.where("state = 'In process'").order "id DESC"
-    elsif params[:state] == 'notdone'
-      @title = "Not done"
-      @tasks = @task_list.task.where("state = 'Not done'").order "id DESC"
-    else
-      @title = "All"
-      @tasks = @task_list.task.order "id DESC"
-    end
-    @title += " tasks of "+@task_list.name
+    params[:state].nil?? @tasks = @task_list.task : @tasks = @task_list.task.where("state = ?", params[:state])
+    @title = "Tasks of "+@task_list.name
   end
 
   def show
@@ -87,16 +76,7 @@ class TasksController < ApplicationController
     @task_list = TaskList.find(params[:task_list_id])
     @task = @task_list.task.find(params[:id])
     @project = @task_list.project if @task_list.project
-
-    if @task.state == :"Not done"
-      @task.state = :"In process"
-    elsif @task.state == :"In process"
-      @task.state = :"Done"
-    else
-      @task.state = :"Not done"
-    end
-
-    if @task.save
+    if @task.change_state
       if @project and @task.performer_id
         Mailer.changed(@task.user, @project.name, @task.name).deliver
       end

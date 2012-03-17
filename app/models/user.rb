@@ -24,6 +24,10 @@ class User < ActiveRecord::Base
     relationships.map(&:project) | Project.where(:user_id => id)
   end
 
+  def project project_id
+    Project.find_by_id_and_user_id(project_id, id)
+  end
+
 
   def has_password?(submitted_password)
     encrypted_password == encrypt(submitted_password)
