@@ -6,7 +6,7 @@ class ProjectsController < ApplicationController
   end
 
   def show
-    @project = current_user.project params[:id]
+    @project = Project.find params[:id]
     @title = @project.name
   end
 
@@ -16,7 +16,7 @@ class ProjectsController < ApplicationController
   end
 
   def edit
-    @project = current_user.project params[:id]
+    @project = Project.find params[:id]
     @title = 'Edit project '+@project.name
   end
 
@@ -33,7 +33,7 @@ class ProjectsController < ApplicationController
   end
 
   def update
-    @project = current_user.project params[:id]
+    @project = Project.new params[:id]
     if @project.update_attributes(params[:project])
       flash[:success] = 'Project was successful updated'
       redirect_to @project
@@ -44,7 +44,7 @@ class ProjectsController < ApplicationController
   end
 
   def destroy
-    @project = current_user.project params[:id]
+    @project = Project.find params[:id]
     if @project.destroy
       flash[:success] = 'Project '+@project.name+' was successfully destroyed'
     else
@@ -54,14 +54,14 @@ class ProjectsController < ApplicationController
   end
 
   def users
-    @project = current_user.project params[:id]
+    @project = Project.find params[:id]
     @peoples = @project.users
     @owner = @peoples.pop
     @title = "Users of "+@project.name
   end
 
   def add_user
-    @project = current_user.project params[:id]
+    @project = Project.find params[:id]
     @invited_user = User.find_by_email(params[:email]) if params[:email]
 
     if @invited_user.nil?
@@ -87,12 +87,12 @@ class ProjectsController < ApplicationController
   end
 
   def invite
-    @project = current_user.project params[:id]
+    @project = Project.find params[:id]
     @title = "Invite to "+@project.name
   end
 
   def remove_user
-    @project = current_user.project params[:id]
+    @project = Project.find params[:id]
     @user = User.find_by_id(params[:user_id])
     if @project.relationships.find_by_user_id(@user.id).destroy
       flash[:success] = 'User '+@user.name+' was successfully removed from project '+@project.name

@@ -1,8 +1,7 @@
 class TasksController < ApplicationController
-  before_filter :authorized_user
 
   def index
-    @task_list = TaskList.find(params[:task_list_id])
+    @task_list = TaskList.find params[:task_list_id]
     params[:state].nil?? @tasks = @task_list.task : @tasks = @task_list.task.where("state = ?", params[:state])
     @title = "Tasks of "+@task_list.name
   end
@@ -80,22 +79,10 @@ class TasksController < ApplicationController
       if @project and @task.performer_id
         Mailer.changed(@task.user, @project.name, @task.name).deliver
       end
-      flash[:success] = 'Task '+@task.name+' state was successfully updated.'
+      flash[:success] = 'Task '+@task.name+' state was successfully updated'
     else
       flash[:error] = 'Error change task state'
     end
     redirect_to task_list_tasks_path
   end
-
-  private
-
-  def authorized_user
-    @task_list = TaskList.find(params[:task_list_id]) if params[:task_list_id]
-    @project = @task_list.project if @task_list.project
-
-    return if (@project and @project.users.include?(current_user))
-    return if (@task_list and @task_list.user_id == current_user.id)
-    redirect_to access_url
-  end
-
 end

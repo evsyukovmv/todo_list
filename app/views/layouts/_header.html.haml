@@ -1,4 +1,4 @@
-%header
+.header
   .span12
     .menu
       .btn-group.fl_left
@@ -6,11 +6,11 @@
         - if signed_in?
           = link_to "Projects", projects_path, class: 'btn'
           = link_to "Task lists", task_lists_path, class: 'btn'
-          = link_to "Profile", '/profile', class: 'btn'
-          = link_to "Sign out", signout_path, :method => :delete, class: 'btn'
+          = link_to "Profile",  edit_user_registration_path, class: 'btn'
+          = link_to "Sign out", destroy_user_session_path, :method => :delete, class: 'btn'
         - else
-          = link_to "Sign in", signin_path, class: 'btn'
-          = link_to "Sign up", signup_path, class: 'btn'
+          = link_to "Sign in", new_user_session_path, class: 'btn'
+          = link_to "Sign up", new_user_registration_path, class: 'btn'
       - if signed_in?
         .btn-group.fl_left
           != '<a class="btn btn-primary" href="#">Create</a>'

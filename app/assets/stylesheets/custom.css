@@ -27,6 +27,7 @@ body{
     padding: 8px 35px 8px 14px;
     text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
     border-color: #EED3D7;
+    font-weight: bold;
 }
 #flash_success{
     color: #468847;
@@ -36,6 +37,18 @@ body{
     margin-bottom: 18px;
     padding: 8px 35px 8px 14px;
     text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+    font-weight: bold;
+}
+
+#flash_alert{
+    color: #FF8C00;
+    font-size: 15px;
+    border-radius: 4px 4px 4px 4px;
+    margin-bottom: 18px;
+    padding: 8px 35px 8px 14px;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+    border-color: #EED3D7;
+    font-weight: bold;
 }
 
 .task_menu{
@@ -62,6 +75,10 @@ body{
 
 #error_explanation {
     margin-bottom: 5px;
+}
+
+#error_explanation h2{
+    font-size: 15px;
 }
 
 #error_explanation b {
@@ -127,8 +144,6 @@ body{
     color: #000;
 }
 
-
-
 #project_task_list_items{
   width: 100%;
 }
@@ -142,4 +157,77 @@ tr.task_done td i{
 }
 tr.task_done td{
     color: #666;
+}
+
+.user_new{
+    min-height: 20px;
+    padding: 19px;
+    margin-bottom: 20px;
+    border: 1px solid #eee;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+}
+
+.user_new label{
+    font-weight: bold;
+}
+
+.user_new input{
+    width: 100%;
+}
+
+.user_new input[type=submit]{
+    padding: 3px 20px;
+    width: auto;
+}
+
+.user_new label[for=user_remember_me]{
+    display: inline;
+}
+
+.user_new a{
+    margin-left: 10px;
+    font-weight: bold;
+}
+
+
+.user_edit{
+    min-height: 20px;
+    padding: 19px;
+    margin-bottom: 20px;
+    border: 1px solid #eee;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+}
+
+.user_edit label{
+    font-weight: bold;
+}
+
+.user_edit input{
+    width: 100%;
+}
+
+.user_edit input[type=submit]{
+    padding: 3px 20px;
+    width: auto;
+}
+
+.user_edit label[for=user_remember_me]{
+    display: inline;
+}
+
+.user_edit a{
+    margin-left: 10px;
+    font-weight: bold;
 }

@@ -1,8 +1,8 @@
 class TaskListsController < ApplicationController
-  before_filter :authorized_user
+
 
   def index
-    @project = Project.find(params[:project_id]) if params[:project_id]
+    @project = Project.find params[:project_id] if params[:project_id]
     if @project
       @title = 'All task lists of project '+@project.name
       @task_lists = @project.task_lists
@@ -14,42 +14,41 @@ class TaskListsController < ApplicationController
 
   def show
     if params[:project_id]
-      @project = Project.find(params[:project_id])
-      @task_list = @project.task_lists.find(params[:id])
+      @project = Project.find params[:project_id]
+      @task_list = @project.task_lists.find params[:id]
       @title = @task_list.name + ' of '+@project.name
     else
-      @task_list = TaskList.find(params[:id])
+      @task_list = current_user.task_lists.find params[:id]
       @title = @task_list.name
     end
   end
 
   def new
-
     if params[:project_id]
-      @project = Project.find(params[:project_id])
+      @project = current_user.project params[:project_id]
       @title = "New task list in project "+@project.name
       @task_list = @project.task_lists.new
     else
       @title = "New task list"
-      @task_list = TaskList.new
+      @task_list = current_user.task_lists.new
     end
   end
 
   def edit
     if params[:project_id]
-      @project = Project.find(params[:project_id])
-      @task_list = @project.task_lists.find(params[:id])
+      @project = current_user.project params[:project_id]
+      @task_list = @project.task_lists.find params[:id]
       @title = "Edit "+@task_list.name+" in "+@project.name
     else
-      @task_list = TaskList.find(params[:id])
+      @task_list = current_user.task_lists.find params[:id]
       @title = "Edit "+@task_list.name
     end
   end
 
   def create
-    @task_list = current_user.task_lists.new(params[:task_list])
+    @task_list = current_user.task_lists.new params[:task_list]
     if params[:project_id]
-      @project = Project.find(params[:project_id])
+      @project = current_user.project params[:project_id]
       @task_list.project_id = @project.id
     end
 
@@ -64,12 +63,12 @@ class TaskListsController < ApplicationController
 
   def update
     if params[:project_id]
-      @project = Project.find(params[:project_id])
-      @task_list = @project.task_lists.find(params[:id])
+      @project = current_user.project params[:project_id]
+      @task_list = @project.task_lists.find params[:id]
     else
-      @task_list = TaskList.find(params[:id])
+      @task_list = current_user.task_lists.find params[:id]
     end
-    if @task_list.update_attributes(params[:task_list])
+    if @task_list.update_attributes params[:task_list]
       flash[:success] = "Task list was successful updated."
       if @project
         redirect_to [@project, @task_list]
@@ -84,10 +83,10 @@ class TaskListsController < ApplicationController
 
   def destroy
     if params[:project_id]
-      @project = Project.find(params[:project_id])
-      @task_list = @project.task_lists.find(params[:id])
+      @project = current_user.project params[:project_id]
+      @task_list = @project.task_lists.find params[:id]
     else
-      @task_list = TaskList.find(params[:id])
+      @task_list = current_user.task_lists.find params[:id]
     end
     if @task_list.destroy
       flash[:success] = 'Task list '+@task_list.name+' was successfully destroyed.'
@@ -96,17 +95,4 @@ class TaskListsController < ApplicationController
     end
     @project ? redirect_to(project_task_lists_path): redirect_to(task_lists_path)
   end
-
-  private
-
-  def authorized_user
-    @project = Project.find(params[:project_id]) if params[:project_id]
-    @task_list = TaskList.find(params[:id]) if params[:id]
-
-    return if (@project.nil? and @task_list.nil? and signed_in?)
-    return if (@project and @project.users.include?(current_user))
-    return if (@task_list and @task_list.user_id == current_user.id)
-    redirect_to access_url
-  end
-
 end

@@ -5,10 +5,13 @@ gem 'rails', '3.1.3'
 # Bundle edge Rails instead:
 # gem 'rails',     :git => 'git://github.com/rails/rails.git'
 
+gem 'jquery-rails'
 gem 'haml'
 gem 'sqlite3'
 gem 'therubyracer'
 gem 'state_machine'
+gem 'cancan'
+gem 'devise'
 gem "symbolize", :require => "symbolize/active_record"
 
 
@@ -19,8 +22,6 @@ group :assets do
   gem 'coffee-rails', '~> 3.1.1'
   gem 'uglifier', '>= 1.0.3'
 end
-
-gem 'jquery-rails'
 
 group :development do
   gem 'annotate', :git => 'git://github.com/jeremyolliver/annotate_models.git', :branch => 'rake_compatibility'
