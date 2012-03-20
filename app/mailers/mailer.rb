@@ -2,7 +2,7 @@ class Mailer < ActionMailer::Base
   default from: "info@todo.com"
 
   def invite(user, project)
-    mail(:to => user.email, :subject => "#{user.name}, you invited to the project #{project}")
+    mail(:to => user.email, :subject => "You invited to the project #{project}")
   end
 
   def assignment(user, project, task)

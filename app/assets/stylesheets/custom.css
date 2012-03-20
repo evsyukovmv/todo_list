@@ -40,6 +40,17 @@ body{
     font-weight: bold;
 }
 
+#flash_notice{
+    color: #468847;
+    font-size: 15px;
+    border-color: #D6E9C6;
+    border-radius: 4px 4px 4px 4px;
+    margin-bottom: 18px;
+    padding: 8px 35px 8px 14px;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+    font-weight: bold;
+}
+
 #flash_alert{
     color: #FF8C00;
     font-size: 15px;

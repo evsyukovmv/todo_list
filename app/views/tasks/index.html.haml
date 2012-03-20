@@ -34,7 +34,7 @@
             = task.priority>4 ? 'High' : task.priority>2 ? 'Middle' : 'Low'
             = '('+task.priority.to_s+')'
           %td
-            =  !task.user.nil?? task.user.name : task.task_list.user.name
+            =  !task.user.nil?? task.user.email : task.task_list.user.email
           %td.operations
             %i.icon-flag
             - task.state == 'done' ? (state = 'Done') : (task.state == 'in_process' ? state = 'In process' : state = 'Not done')

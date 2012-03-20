@@ -1,25 +1,26 @@
 #User
 def valid_user
-  @user ||= { :name => "Test User", :email => "test@example.com",
+  @user ||= {:email => "test@example.com",
               :password => "password", :password_confirmation => "password"}
 end
 
 def valid_other_user
-  @user_other ||= { :name => "Test Other User", :email => "test_other@example.com",
+  @user_other ||= {:email => "test_other@example.com",
               :password => "password", :password_confirmation => "password"}
 end
 
 def sign_up user
-  visit '/signup'
-  fill_in "Name", :with => user[:name]
+  visit root_path
+  click_link 'Sign up'
   fill_in "Email", :with => user[:email]
   fill_in "Password", :with => user[:password]
-  fill_in "Confirmation", :with => user[:password_confirmation]
+  fill_in "Password confirmation", :with => user[:password_confirmation]
   click_button "Sign up"
 end
 
 def sign_in user
-  visit '/signin'
+  visit root_path
+  click_link 'Sign in'
   fill_in "Email", :with => user[:email]
   fill_in "Password", :with => user[:password]
   click_button "Sign in"

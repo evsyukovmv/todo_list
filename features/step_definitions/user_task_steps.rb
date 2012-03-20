@@ -99,7 +99,7 @@ When /^I create task with valid data assign to other user in task list in projec
   click_link('Task')
   fill_in "Name", with: task[:name]
   fill_in "Description", with: task[:description]
-  select user_other[:name], from: 'Performer'
+  select user_other[:email], from: 'Performer'
   click_button "Create Task"
 end
 
@@ -111,7 +111,7 @@ Then /^I see successful created task assigned to other in task list in project$/
   user_other = valid_other_user
   page.should have_content task[:name]
   page.should have_content task[:description]
-  page.should have_content user_other[:name]
+  page.should have_content user_other[:email]
 end
 
 When /^I update task with valid data assign to other user in task list in project$/ do
@@ -123,7 +123,7 @@ When /^I update task with valid data assign to other user in task list in projec
   click_link 'Edit'
   fill_in "Name", with: task[:name]
   fill_in "Description", with: task[:description]
-  select user[:name], from: 'Performer'
+  select user[:email], from: 'Performer'
   click_button "Update Task"
 end
 
@@ -135,5 +135,5 @@ Then /^I see successful updated task assigned to other in task list in project$/
   find('#task_list').click_link('Tasks')
   page.should have_content task[:name]
   page.should have_content task[:description]
-  page.should have_content user[:name]
+  page.should have_content user[:email]
 end

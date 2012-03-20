@@ -33,7 +33,7 @@ class ProjectsController < ApplicationController
   end
 
   def update
-    @project = Project.new params[:id]
+    @project = Project.find params[:id]
     if @project.update_attributes(params[:project])
       flash[:success] = 'Project was successful updated'
       redirect_to @project
@@ -95,7 +95,7 @@ class ProjectsController < ApplicationController
     @project = Project.find params[:id]
     @user = User.find_by_id(params[:user_id])
     if @project.relationships.find_by_user_id(@user.id).destroy
-      flash[:success] = 'User '+@user.name+' was successfully removed from project '+@project.name
+      flash[:success] = 'User was successfully removed from project '+@project.name
     else
       flash[:error] = 'Error user destroy from project '+@project.name
     end

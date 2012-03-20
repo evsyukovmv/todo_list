@@ -6,9 +6,6 @@ Feature: Sign up
   As a user
   I want to be able to sign up
 
-  Background:
-    Given I am not logged in
-
   Scenario: User signs up with valid data
     When I sign up with valid user data
     Then I should see user menu

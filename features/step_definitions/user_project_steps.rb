@@ -66,7 +66,6 @@ Then /^I see invited user in project$/ do
   page.should have_content 'User was successfully added to project'
   visit root_path
   find('#project').click_link('Peoples')
-  find('.table-striped').should have_content user_other[:name]
   find('.table-striped').should have_content user_other[:email]
 end
 
@@ -86,6 +85,5 @@ end
 
 Then /^I do not see removed invited user in project$/ do
   user_other = valid_other_user
-  find('.table-striped').should_not have_content user_other[:name]
   find('.table-striped').should_not have_content user_other[:email]
 end

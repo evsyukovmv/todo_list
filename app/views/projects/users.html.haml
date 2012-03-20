@@ -11,18 +11,12 @@
       %tbody
         %tr
           %td
-            %i
-              = @owner.name
-          %td
             = @owner.email
           %td
             %b
               Owner
       - @peoples.each do |people|
         %tr
-          %td
-            %i
-              = people.name
           %td
             = people.email
           %td

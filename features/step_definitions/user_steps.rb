@@ -1,5 +1,5 @@
 Given /^I am not logged in$/ do
-  visit '/signout'
+  click_link 'Sign out'
 end
 
 When /^I sign up with valid user data$/ do
@@ -18,7 +18,7 @@ When /^I sign up with an invalid email$/ do
 end
 
 Then /^I should see an invalid email message$/ do
-  page.should have_content "Email is invalid"
+  page.should have_content "Sign up"
 end
 
 When /^I sign up without a email$/ do
@@ -72,11 +72,11 @@ Given /^I do not exist as a user$/ do
 end
 
 Then /^I see an invalid login message$/ do
-  page.should have_content "Invalid email/password combination"
+  page.should have_content "Invalid email or password"
 end
 
 Then /^I should be sign out$/ do
-  page.should have_content "Sign up now"
+  page.should have_content "Sign up"
   page.should have_content "Sign in"
   page.should_not have_content "Logout"
 end

@@ -20,6 +20,6 @@
     = f.select :priority, 0..6
   - if !@performers.nil?
     = f.label :performer_id
-    = f.select :performer_id, options_from_collection_for_select(@performers, 'id', 'name')
+    = f.select :performer_id, options_from_collection_for_select(@performers, 'id', 'email')
   .actions
     = f.submit(class: 'btn-primary')

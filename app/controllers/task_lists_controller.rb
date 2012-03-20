@@ -25,7 +25,7 @@ class TaskListsController < ApplicationController
 
   def new
     if params[:project_id]
-      @project = current_user.project params[:project_id]
+      @project = Project.find params[:project_id]
       @title = "New task list in project "+@project.name
       @task_list = @project.task_lists.new
     else
@@ -36,7 +36,7 @@ class TaskListsController < ApplicationController
 
   def edit
     if params[:project_id]
-      @project = current_user.project params[:project_id]
+      @project = Project.find params[:project_id]
       @task_list = @project.task_lists.find params[:id]
       @title = "Edit "+@task_list.name+" in "+@project.name
     else
@@ -48,7 +48,7 @@ class TaskListsController < ApplicationController
   def create
     @task_list = current_user.task_lists.new params[:task_list]
     if params[:project_id]
-      @project = current_user.project params[:project_id]
+      @project = Project.find params[:project_id]
       @task_list.project_id = @project.id
     end
 
@@ -63,7 +63,7 @@ class TaskListsController < ApplicationController
 
   def update
     if params[:project_id]
-      @project = current_user.project params[:project_id]
+      @project = Project.find params[:project_id]
       @task_list = @project.task_lists.find params[:id]
     else
       @task_list = current_user.task_lists.find params[:id]
@@ -83,7 +83,7 @@ class TaskListsController < ApplicationController
 
   def destroy
     if params[:project_id]
-      @project = current_user.project params[:project_id]
+      @project = Project.find params[:project_id]
       @task_list = @project.task_lists.find params[:id]
     else
       @task_list = current_user.task_lists.find params[:id]
