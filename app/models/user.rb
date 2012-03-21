@@ -16,4 +16,6 @@ class User < ActiveRecord::Base
     relationships.map(&:project) | Project.where(:user_id => id)
   end
 
+
+
 end

@@ -37,8 +37,7 @@
             =  !task.user.nil?? task.user.email : task.task_list.user.email
           %td.operations
             %i.icon-flag
-            - task.state == 'done' ? (state = 'Done') : (task.state == 'in_process' ? state = 'In process' : state = 'Not done')
-            = link_to "#{state}", change_state_task_list_task_url(@task_list, task)
+            = link_to "#{task.state.humanize}", change_state_task_list_task_url(@task_list, task)
             %br
             %i.icon-edit
             = link_to 'Edit', edit_task_list_task_url(@task_list, task)

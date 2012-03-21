@@ -3,18 +3,25 @@ require 'spec_helper'
 describe ProjectsController do
 
   before(:each) do
-    @user = mock_model(User, name: 'user name', email: 'email@email.com', password: 'password', save: true)
-    controller.stub!(:current_user).and_return @user
+    @user = Factory.create(:user)
+    sign_in @user
+
     @project =  mock_model(Project,  id: 1, name: 'Project name', save: true)
     @project_invalid =  mock_model(Project,  id: 1, name: 'Project name', save: false)
-    @project.stub!(:users).and_return [@user]
+
+    @ability = Object.new
+    @ability.extend(CanCan::Ability)
+    controller.stub(:current_ability) { @ability }
   end
+
+
 
   describe "GET 'index'" do
 
     before(:each) do
       @projects_array = [@project, @project, @project]
-      @user.stub!(:projects).and_return @projects_array
+      controller.stub_chain(:current_user, :projects).and_return @projects_array
+      @ability.can :read, Project
       get :index
     end
 
@@ -32,10 +39,12 @@ describe ProjectsController do
 
   end
 
+
   describe "GET 'show' for project" do
 
     before(:each) do
-      @user.stub!(:project).and_return @project
+      Project.stub!(:find).and_return @project
+      @ability.can :read, Project
       get :show, id: @project.id
     end
 
@@ -53,10 +62,12 @@ describe ProjectsController do
 
   end
 
+
   describe "GET 'new'" do
 
     before(:each) do
       Project.stub!(:new).and_return @project
+      @ability.can :manage, Project
       get :new
     end
 
@@ -77,7 +88,8 @@ describe ProjectsController do
   describe "GET 'edit'" do
 
     before(:each) do
-      @user.stub!(:project).and_return @project
+      Project.stub!(:find).and_return @project
+      @ability.can :manage, Project
       get :edit, id: @project.id
     end
 
@@ -102,6 +114,7 @@ describe ProjectsController do
       before(:each) do
         Project.stub!(:new).and_return @project
         @project.stub!(:user=)
+        @ability.can :manage, Project
         post :create, project: @project
       end
 
@@ -124,6 +137,7 @@ describe ProjectsController do
       before(:each) do
         Project.stub!(:new).and_return @project_invalid
         @project_invalid.stub!(:user=)
+        @ability.can :manage, Project
         post :create, project: @project
       end
 
@@ -148,8 +162,9 @@ describe ProjectsController do
     describe "update project with valid data" do
 
       before(:each) do
-        @user.stub!(:project).and_return @project
+        Project.stub!(:find).and_return @project
         @project.stub!(:update_attributes).and_return @project
+        @ability.can :manage, Project
         post :update, id: @project.id
       end
 
@@ -169,8 +184,9 @@ describe ProjectsController do
 
     describe "update project with invalid data" do
       before(:each) do
-        @user.stub!(:project).and_return @project_invalid
+        Project.stub!(:find).and_return @project_invalid
         @project_invalid.stub!(:update_attributes).and_return false
+        @ability.can :manage, Project
         post :update, id: @project.id
       end
 
@@ -194,8 +210,9 @@ describe ProjectsController do
     describe "destroy project with valid data" do
 
       before(:each) do
-        @user.stub!(:project).and_return @project
+        Project.stub!(:find).and_return @project
         @project.stub!(:destroy).and_return @project
+        @ability.can :manage, Project
         get :destroy, id: @project.id
       end
 
@@ -216,8 +233,9 @@ describe ProjectsController do
     describe "destroy project with invalid data" do
 
       before(:each) do
-        @user.stub!(:project).and_return @project_invalid
+        Project.stub!(:find).and_return @project_invalid
         @project_invalid.stub!(:destroy).and_return false
+        @ability.can :manage, Project
         get :destroy, id: @project.id
       end
 
@@ -240,8 +258,9 @@ describe ProjectsController do
   describe "GET 'users' for project" do
 
     before(:each) do
-      @user.stub!(:project).and_return @project
+      Project.stub!(:find).and_return @project
       @project.stub(:users).and_return [@user]
+      @ability.can :manage, Project
       get :users, id: @project.id
     end
 
@@ -262,7 +281,8 @@ describe ProjectsController do
   describe "GET 'invite' for project" do
 
     before(:each) do
-      @user.stub!(:project).and_return @project
+      Project.stub!(:find).and_return @project
+      @ability.can :manage, Project
       get :invite, id: @project.id
     end
 
@@ -285,8 +305,9 @@ describe ProjectsController do
     describe "add user with valid data" do
 
       before(:each) do
-        @user.stub!(:project).and_return @project
+        Project.stub!(:find).and_return @project
         User.stub!(:find_by_email).and_return @user
+        @ability.can :manage, Project
         post :add_user, id: @project.id, email: @user.email
       end
 
@@ -311,8 +332,9 @@ describe ProjectsController do
 
       describe "user not found in database" do
         before(:each) do
-          @user.stub!(:project).and_return @project
+          Project.stub!(:find).and_return @project
           User.stub!(:find_by_email).and_return nil
+          @ability.can :manage, Project
           post :add_user, id: @project.id, email: @user.email
         end
 
@@ -338,8 +360,9 @@ describe ProjectsController do
 
     describe "project not found in database" do
       before(:each) do
-        @user.stub!(:project).and_return nil
+        Project.stub!(:find).and_return nil
         User.stub!(:find_by_email).and_return @user
+        @ability.can :manage, Project
         post :add_user, id: @project.id, email: @user.email
       end
 
@@ -363,9 +386,11 @@ describe ProjectsController do
 
     describe "relation not saved" do
       before(:each) do
-        @user.stub!(:project).and_return @project
+        Project.stub!(:find).and_return @project
         User.stub!(:find_by_email).and_return @user
         Relationship.stub!(:new).and_return mock_model(Relationship, save: false)
+        @ability.can :manage, Project
+
         post :add_user, id: @project.id, email: @user.email
       end
 
@@ -394,9 +419,10 @@ describe ProjectsController do
     describe "remove with valid data" do
 
       before(:each) do
-        @user.stub!(:project).and_return @project
+        Project.stub!(:find).and_return @project
         User.stub!(:find_by_id).and_return @user
         @project.stub_chain(:relationships, :find_by_user_id, :destroy).and_return true
+        @ability.can :manage, Project
         get :remove_user, id: @project.id, user_id: @user.id
       end
 
@@ -409,7 +435,7 @@ describe ProjectsController do
       end
 
       it "should return flash success" do
-        flash[:success].should == 'User '+@user.name+' was successfully removed from project '+@project.name
+        flash[:success].should == 'User was successfully removed from project '+@project.name
       end
 
       it "should redirect to user_project_path" do
@@ -421,9 +447,10 @@ describe ProjectsController do
     describe "remove with invalid data" do
 
       before(:each) do
-        @user.stub!(:project).and_return @project
+        Project.stub!(:find).and_return @project
         User.stub!(:find_by_id).and_return @user
         @project.stub_chain(:relationships, :find_by_user_id, :destroy).and_return false
+        @ability.can :manage, Project
         get :remove_user, id: @project.id, user_id: @user.id
       end
 

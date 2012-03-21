@@ -68,7 +68,6 @@ end
 
 Given /^I do not exist as a user$/ do
   User.find(:first, conditions: {email: valid_user[:email]}).should be_nil
-  visit '/signout'
 end
 
 Then /^I see an invalid login message$/ do

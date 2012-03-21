@@ -14,7 +14,7 @@ class TaskList < ActiveRecord::Base
 
   validates :name, :presence => true
 
-  has_many :task, :dependent => :destroy
+  has_many :tasks, :dependent => :destroy
   belongs_to :user
   belongs_to :project
 end
