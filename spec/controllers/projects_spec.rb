@@ -14,15 +14,15 @@ describe ProjectsController do
     controller.stub(:current_ability) { @ability }
   end
 
-
-
   describe "GET 'index'" do
 
     before(:each) do
       @projects_array = [@project, @project, @project]
       controller.stub_chain(:current_user, :projects).and_return @projects_array
+
       @ability.can :read, Project
       get :index
+
     end
 
     it "should assigns all projects to @projects" do
@@ -38,7 +38,6 @@ describe ProjectsController do
     end
 
   end
-
 
   describe "GET 'show' for project" do
 
@@ -61,7 +60,6 @@ describe ProjectsController do
     end
 
   end
-
 
   describe "GET 'new'" do
 

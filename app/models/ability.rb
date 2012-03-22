@@ -8,7 +8,7 @@ class Ability
       can :manage, Project do |project|
         project.new_record? || project.user_id == user.id
       end
-      can :read, Project do |project|
+      can [:read, :users, :invite, :add_user], Project do |project|
         project.users.include? user
       end
 

@@ -53,11 +53,7 @@ class TasksController < ApplicationController
   end
 
   def destroy
-    if @task.destroy
-      flash[:success] = 'Task '+@task.name+' was successfully destroyed'
-    else
-      flash[:error] = 'Error task destroy'
-    end
+    @task.destroy ? flash[:success] = 'Task '+@task.name+' was successfully destroyed' : flash[:error] = 'Error task destroy'
     redirect_to task_list_tasks_path
   end
 
