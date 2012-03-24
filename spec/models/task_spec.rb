@@ -13,7 +13,7 @@ describe Task do
   it { should validate_presence_of(:name)}
 
   it "should accept valid states" do
-    ["Done", "Not done", "In process"].each do |state|
+    ["done", "not_done", "in_process"].each do |state|
       should allow_value(state).for(:state)
     end
   end

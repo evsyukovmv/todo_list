@@ -153,14 +153,6 @@ describe TaskListsController do
 
   end
 
-  describe "POST 'create'" do
-
-    describe "with project" do
-
-    end
-
-  end
-
 
   describe "POST 'create'" do
 

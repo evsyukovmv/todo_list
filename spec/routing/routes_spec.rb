@@ -9,33 +9,6 @@ describe "routing to matches" do
     )
   end
 
-  it "routes /signup to users#new" do
-    { get: '/signup' }.should route_to(
-      controller: 'users',
-      action: 'new'
-    )
-  end
-
-  it "routes /signin to sessions#new" do
-    { get: '/signin' }.should route_to(
-      controller: 'sessions',
-      action: 'new'
-    )
-  end
-
-  it "routes /signout to sessions#destroy" do
-    { get: '/signout' }.should route_to(
-      controller: 'sessions',
-      action: 'destroy'
-    )
-  end
-
-  it "routes /profile to users#edit" do
-    { get: '/profile' }.should route_to(
-      controller: 'users',
-      action: 'edit'
-    )
-  end
 
   it "routes /access to pages#access" do
     { get: '/access' }.should route_to(
@@ -53,21 +26,21 @@ describe "routing to matches" do
     )
   end
 
-  it "routes /task_lists/1/tasks/inprocess to tasks#index for state in process" do
-    { get: '/task_lists/1/tasks/inprocess' }.should route_to(
+  it "routes /task_lists/1/tasks/in_process to tasks#index for state in process" do
+    { get: '/task_lists/1/tasks/in_process' }.should route_to(
       controller: 'tasks',
       action: 'index',
       task_list_id: '1',
-      state: 'inprocess'
+      state: 'in_process'
     )
   end
 
-  it "routes /task_lists/1/tasks/notdone to tasks#index for state not done" do
-    { get: '/task_lists/1/tasks/notdone' }.should route_to(
+  it "routes /task_lists/1/tasks/not_done to tasks#index for state not done" do
+    { get: '/task_lists/1/tasks/not_done' }.should route_to(
       controller: 'tasks',
       action: 'index',
       task_list_id: '1',
-      state: 'notdone'
+      state: 'not_done'
     )
   end
 

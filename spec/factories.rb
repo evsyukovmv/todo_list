@@ -17,6 +17,6 @@ end
 Factory.define :task do |task|
   task.name "Example task"
   task.description "Description"
-  task.state "Not done"
+  task.state "not_done"
   task.priority 1
 end
