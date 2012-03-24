@@ -14,7 +14,7 @@
 
 class Task < ActiveRecord::Base
 
-  attr_accessible :name, :description, :state, :priority, :performer_id
+  attr_accessible :name, :description, :state, :priority, :performer_id, :task_list_id
 
   state_machine :state, initial: :not_done do
     state :not_done

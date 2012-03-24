@@ -10,7 +10,7 @@
 #
 
 class TaskList < ActiveRecord::Base
-  attr_accessible :name, :description
+  attr_accessible :name, :description, :project_id, :user_id
 
   validates :name, :presence => true
 
