@@ -17,9 +17,9 @@ describe Project do
   it { should validate_presence_of(:name)}
 
   it "should have all users list through user_id and relationships" do
-    user_directly = User.create!(email: 'first@mail.com', password: 'password', password_confirmation: 'password')
-    user_relation = User.create!(email: 'second@mail.com', password: 'password', password_confirmation: 'password')
-    project = Project.create!(name: 'Project name', user_id: user_directly.id)
+    user_directly = FactoryGirl.create(:user)
+    user_relation = FactoryGirl.create(:user)
+    project = FactoryGirl.create(:project, user_id: user_directly.id)
     Relationship.create!(project_id: project.id, user_id: user_relation.id)
     project.users.should == [user_relation, user_directly]
   end
