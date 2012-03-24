@@ -37,7 +37,7 @@ describe TaskListsController do
       end
 
       it "should assigns title 'All task lists of project'" do
-        assigns(:title).should == 'All task lists of project '+@project.name
+        assigns(:title).should == "All task lists of project "+@project.name
       end
 
       it "should render template index" do
@@ -75,17 +75,36 @@ describe TaskListsController do
 
       before(:each) do
         Project.stub!(:find).and_return @project
-        @project.stub!(:task_lists).and_return @task_list
-        #TaskList.stub!(:find).and_return @task_list
-        get :index, project_id: @project.id
+        @project.stub_chain(:task_lists, :find).and_return @task_list
+        get :show, id: @task_list.id, project_id: @project.id
       end
 
       it "should assigns task_list" do
         assigns(:task_list).should == @task_list
       end
 
-      it "should assigns title to project name" do
+      it "should assigns title task list of project" do
         assigns(:title).should == @task_list.name+' of '+@project.name
+      end
+
+      it "should render template show" do
+        response.should render_template(:show)
+      end
+
+    end
+
+    describe "without project" do
+      before(:each) do
+        TaskList.stub!(:find).and_return @task_list
+        get :show, id: @task_list.id
+      end
+
+      it "should assigns task_list" do
+        assigns(:task_list).should == @task_list
+      end
+
+      it "should assigns title task list" do
+        assigns(:title).should == @task_list.name
       end
 
       it "should render template show" do
@@ -96,126 +115,351 @@ describe TaskListsController do
 
   end
 
-=begin
+  describe "GET 'new'" do
 
-  it "should show task_list in project" do
-    get :show, id: @task_list.id, project_id: @project.id
-    assigns(:title).should == @task_list.name + ' of '+@project.name
-    response.should render_template(:show)
+    describe "in project" do
+      before(:each) do
+        Project.stub!(:find).and_return @project
+        @project.stub_chain(:task_lists, :new).and_return @task_list
+        get :new, project_id: @project.id
+      end
+
+      it "should assigns title new in project" do
+        @title = "New task list in project "+@project.name
+      end
+
+      it "should render template new" do
+        response.should render_template :new
+      end
+
+    end
+
+    describe "without project" do
+
+      before(:each) do
+        TaskList.stub!(:new).and_return @task_list
+        get :new
+      end
+
+      it "should assigns title new in project" do
+        @title = "New task list"
+      end
+
+      it "should render template new" do
+        response.should render_template :new
+      end
+
+    end
+
   end
 
-  it "should show task_list" do
-    get :show, id: @task_list.id
-    assigns(:title).should == @task_list.name
-    response.should render_template(:show)
+  describe "POST 'create'" do
+
+    describe "with project" do
+
+    end
+
   end
 
-  it "should show new form in project" do
-    get :new, project_id: @project.id
-    assigns(:title).should ==  "New task list in project "+@project.name
-    response.should render_template(:new)
+
+  describe "POST 'create'" do
+
+    describe "with project" do
+
+      describe "with valid data" do
+
+        before(:each) do
+          Project.stub!(:find).and_return @project
+          @project.stub_chain(:task_lists, :new).and_return @task_list
+          @task_list.stub!(:save).and_return @task_list
+          post :create, project_id: @project.id, task_list: @task_list
+        end
+
+        it "should have flash success" do
+          flash[:success].should == "Task list was successful created"
+        end
+
+        it "should redirect to project task lists path" do
+          response.should redirect_to project_task_lists_path(@project)
+        end
+
+      end
+
+
+      describe "with invalid data" do
+
+        before(:each) do
+          Project.stub!(:find).and_return @project
+          @project.stub_chain(:task_lists, :new).and_return @task_list_invalid
+          @task_list.stub!(:save).and_return @task_list_invalid
+          post :create, project_id: @project.id, task_list: @task_list_invalid
+        end
+
+        it "should have flash success" do
+          flash[:error].should == "Error task list create"
+        end
+
+        it "should redirect to project task lists path" do
+          response.should render_template :new
+        end
+
+      end
+
+    end
+
+    describe "without project" do
+
+      describe "with valid data" do
+
+        before(:each) do
+          TaskList.stub!(:new).and_return @task_list
+          TaskList.stub!(:save).and_return @task_list
+          post :create, task_list: @task_list
+        end
+
+        it "should have flash success" do
+          flash[:success].should == "Task list was successful created"
+        end
+
+        it "should redirect to project task lists path" do
+          response.should redirect_to task_lists_path
+        end
+
+      end
+
+
+      describe "with invalid data" do
+
+        before(:each) do
+          TaskList.stub!(:new).and_return @task_list_invalid
+          TaskList.stub!(:save).and_return @task_list_invalid
+          post :create, task_list: @task_list_invalid
+        end
+
+        it "should have flash success" do
+          flash[:error].should == "Error task list create"
+        end
+
+        it "should redirect to project task lists path" do
+          response.should render_template :new
+        end
+
+      end
+
+    end
+
   end
 
-  it "should show new form" do
-    get :new
-    assigns(:title).should ==  "New task list"
-    response.should render_template(:new)
+  describe "GET 'edit'" do
+
+    describe "with project" do
+
+      before(:each) do
+        Project.stub!(:find).and_return @project
+        @project.stub_chain(:task_lists, :find).and_return @task_list
+        get :edit, id: @task_list.id, project_id: @project.id
+      end
+
+      it "should assign title Edit task list in project " do
+        assigns(:title).should == "Edit "+@task_list.name+" in "+@project.name
+      end
+
+      it "should render template 'edit'" do
+        response.should render_template :edit
+      end
+
+    end
+
+    describe "without project" do
+
+      before(:each) do
+        TaskList.stub!(:find).and_return @task_list
+        get :edit, id: @task_list.id
+      end
+
+      it "should assign title Edit task list in project " do
+        assigns(:title).should == "Edit "+@task_list.name
+      end
+
+      it "should render template 'edit'" do
+        response.should render_template :edit
+      end
+
+    end
+
   end
 
-  it "should show edit form with task list in project" do
-    get :edit, id: @task_list.id, project_id: @project.id
-    assigns(:title).should == "Edit "+@task_list.name+" in "+@project.name
-    response.should render_template(:edit)
+  describe "POST 'update'" do
+
+    describe "with project" do
+
+      describe "with valid data" do
+
+        before(:each) do
+          Project.stub!(:find).and_return @project
+          @project.stub_chain(:task_lists, :find).and_return @task_list
+          @task_list.stub!(:update_attributes).and_return @task_list
+          post :update, project_id: @project.id, id: @task_list.id, task_list: @task_list
+        end
+
+        it "should have flash success" do
+          flash[:success].should == "Task list was successful updated"
+        end
+
+        it "should redirect to project task lists path" do
+          response.should redirect_to([@project, @task_list])
+        end
+
+      end
+
+
+      describe "with invalid data" do
+
+        before(:each) do
+          Project.stub!(:find).and_return @project
+          @project.stub_chain(:task_lists, :find).and_return @task_list_invalid
+          @task_list_invalid.stub!(:update_attributes).and_return false
+          post :update, project_id: @project.id, id: @task_list.id, task_list: @task_list_invalid
+        end
+
+        it "should have flash error" do
+          flash[:error].should == "Error task list update"
+        end
+
+        it "should redirect to project task lists path" do
+          response.should render_template :edit
+        end
+
+      end
+
+    end
+
+    describe "without project" do
+
+      describe "with valid data" do
+
+        before(:each) do
+          TaskList.stub!(:find).and_return @task_list
+          @task_list.stub!(:update_attributes).and_return @task_list
+          post :update, id: @task_list.id, task_list: @task_list
+        end
+
+        it "should have flash success" do
+          flash[:success].should == "Task list was successful updated"
+        end
+
+        it "should redirect to project task lists path" do
+          response.should redirect_to(@task_list)
+        end
+
+      end
+
+
+      describe "with invalid data" do
+
+        before(:each) do
+          TaskList.stub!(:find).and_return @task_list
+          @task_list.stub!(:update_attributes).and_return false
+          post :update, id: @task_list.id, task_list: @task_list_invalid
+        end
+
+        it "should have flash error" do
+          flash[:error].should == "Error task list update"
+        end
+
+        it "should redirect to project task lists path" do
+          response.should render_template :edit
+        end
+
+      end
+
+    end
+
   end
 
-  it "should show edit form with task list" do
-    get :edit, id: @task_list.id
-    assigns(:title).should == "Edit "+@task_list.name
-    response.should render_template(:edit)
-  end
+  describe "GET 'destroy'" do
+    describe "with project" do
 
-  it "should create task list in project" do
-    post :create, project_id: @project.id, task_list: @task_list
-    flash[:success].should == 'Task list was successful created.'
-    response.should redirect_to  redirect_to(project_task_lists_path(@project))
-  end
+      describe "with valid data" do
 
-  it "should create task list" do
-    post :create, task_list: @task_list
-    flash[:success].should == 'Task list was successful created.'
-    response.should redirect_to  redirect_to(task_lists_path)
-  end
+        before(:each) do
+          Project.stub!(:find).and_return @project
+          @project.stub_chain(:task_lists, :find).and_return @task_list
+          @task_list.stub!(:destroy).and_return @task_list
+          get :destroy, project_id: @project.id, id: @task_list.id
+        end
 
-  it "should create task list in project" do
-    post :create, project_id: @project.id, task_list: @task_list
-    flash[:success].should == 'Task list was successful created.'
-    response.should redirect_to(project_task_lists_path(@project))
-  end
+        it "should have flash success" do
+          flash[:success].should == 'Task list '+@task_list.name+' was successfully destroyed'
+        end
 
-  it "should show error if task list not created" do
-    controller.stub_chain(:current_user, :task_lists, :new).and_return @task_list_invalid
-    post :create, task_list: @task_list_invalid
-    flash[:error].should == 'Error task list create!'
-    response.should render_template(:new)
-  end
+        it "should redirect to project task lists path" do
+          response.should redirect_to project_task_lists_path(@project)
+        end
 
-  it "should update task list in project" do
-    post :update, project_id: @project.id, id: @task_list.id
-    flash[:success].should == 'Task list was successful updated.'
-    response.should redirect_to  [@project, @task_list]
-  end
+      end
 
-  it "should update task list" do
-    post :update, id: @task_list.id
-    flash[:success].should == 'Task list was successful updated.'
-    response.should redirect_to  @task_list
-  end
+      describe "with invalid data" do
 
-  it "should show error if not updated task list" do
-    TaskList.stub!(:find).and_return @task_list_invalid
-    post :update, id: @task_list_invalid.id
-    flash[:error].should == 'Error task list update.'
-    response.should render_template 'edit'
-  end
+        before(:each) do
+          Project.stub!(:find).and_return @project
+          @project.stub_chain(:task_lists, :find).and_return @task_list
+          @task_list.stub!(:destroy).and_return false
+          get :destroy, project_id: @project.id, id: @task_list.id
+        end
 
-  it "should destroy task list" do
-    get :destroy, id: @task_list.id
-    flash[:success].should == 'Task list '+@task_list.name+' was successfully destroyed.'
-    response.should redirect_to task_lists_path
-  end
+        it "should have flash error" do
+          flash[:error].should == 'Error task list destroy'
+        end
 
-  it "should destroy task list in project" do
-    get :destroy, project_id: @project.id, id: @task_list.id
-    flash[:success].should == 'Task list '+@task_list.name+' was successfully destroyed.'
-    response.should redirect_to project_task_lists_path(@project)
-  end
+        it "should redirect to project task lists path" do
+          response.should redirect_to project_task_lists_path(@project)
+        end
 
-  it "should show error if not destroyed" do
-    TaskList.stub!(:find).and_return @task_list_invalid
-    get :destroy, id: @task_list_invalid.id
-    flash[:error].should == 'Error task list destroy'
-    response.should redirect_to task_lists_path
-  end
+      end
+    end
 
-  it "should return redirect_to access_url in authorized method if not signed in" do
-    Project.stub!(:find).and_return nil
-    TaskList.stub!(:find).and_return nil
-    controller.stub!(:current_user).and_return nil
-    get :index
-    response.should redirect_to access_url
-  end
 
-  it "should return redirect to access_url in authorized method if signed but not in project users" do
-    @project.stub_chain(:users, :include?).and_return false
-    get :index, project_id: @project.id
-    response.should redirect_to access_url
-  end
+    describe "without project" do
 
-  it "should return redirect to access_url in authorized method if signed but not in task_list user" do
-    @task_list.stub!(:user_id).and_return false
-    get :show, id: @task_list.id
-    response.should redirect_to access_url
+      describe "with valid data" do
+
+        before(:each) do
+          TaskList.stub!(:find).and_return @task_list
+          @task_list.stub!(:destroy).and_return @task_list
+          get :destroy, id: @task_list.id
+        end
+
+        it "should have flash success" do
+          flash[:success].should == 'Task list '+@task_list.name+' was successfully destroyed'
+        end
+
+        it "should redirect to project task lists path" do
+          response.should redirect_to task_lists_path
+        end
+
+      end
+
+      describe "with invalid data" do
+
+        before(:each) do
+          TaskList.stub!(:find).and_return @task_list
+          @task_list.stub!(:destroy).and_return false
+          get :destroy, id: @task_list.id
+        end
+
+        it "should have flash error" do
+          flash[:error].should == 'Error task list destroy'
+        end
+
+        it "should redirect to project task lists path" do
+          response.should redirect_to task_lists_path
+        end
+
+      end
+
+    end
+
   end
-=end
 
 end

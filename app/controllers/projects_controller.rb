@@ -1,6 +1,6 @@
 class ProjectsController < ApplicationController
 
-  load_and_authorize_resource :through => :current_user
+  load_and_authorize_resource
 
   def index
     @projects = current_user.projects
@@ -20,7 +20,6 @@ class ProjectsController < ApplicationController
   end
 
   def create
-    @project.user = current_user
     if @project.save
       flash[:success] =  'Project was successfully created'
       redirect_to @project

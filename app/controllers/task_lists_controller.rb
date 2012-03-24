@@ -29,29 +29,28 @@ class TaskListsController < ApplicationController
   end
 
   def create
-    @task_list.user_id = current_user.id
     if @task_list.save
-      flash[:success] = "Task list was successful created."
+      flash[:success] = "Task list was successful created"
       @project? redirect_to(project_task_lists_path) : redirect_to(task_lists_path)
     else
-      flash[:error] = "Error task list create!"
+      flash[:error] = "Error task list create"
       render 'new'
     end
   end
 
   def update
     if @task_list.update_attributes params[:task_list]
-      flash[:success] = "Task list was successful updated."
+      flash[:success] = "Task list was successful updated"
       @project? redirect_to([@project, @task_list]) : redirect_to(@task_list)
     else
-      flash[:error] = "Error task list update."
+      flash[:error] = "Error task list update"
       render 'edit'
     end
   end
 
   def destroy
     if @task_list.destroy
-      flash[:success] = 'Task list '+@task_list.name+' was successfully destroyed.'
+      flash[:success] = 'Task list '+@task_list.name+' was successfully destroyed'
     else
       flash[:error] = 'Error task list destroy'
     end
