@@ -1,6 +1,7 @@
+- @title = "Invite to "+@project.name
 .row
   .span3.offset4
-    =  form_tag(add_user_project_url(@user), :method => :post, class: 'well') do
+    =  form_tag(project_users_path, :method => :post, class: 'well') do
       = label_tag 'Enter email for invite: '
       = email_field_tag 'email'
       = button_tag "Invite to project", class: 'btn'

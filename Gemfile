@@ -37,4 +37,5 @@ group :test do
   gem 'cucumber', '1.1.4'
   gem 'cucumber-rails', '1.2.1'
   gem 'capybara', '1.1.2'
+  gem 'email_spec'
 end

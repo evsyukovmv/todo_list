@@ -1,56 +1,5 @@
-#User
-def valid_user
-  @user ||= {:email => "test@example.com",
-              :password => "password", :password_confirmation => "password"}
-end
-
-def valid_other_user
-  @user_other ||= {:email => "test_other@example.com",
-              :password => "password", :password_confirmation => "password"}
-end
-
-def sign_up user
-  visit root_path
-  click_link 'Sign up'
-  fill_in "Email", :with => user[:email]
-  fill_in "Password", :with => user[:password]
-  fill_in "Password confirmation", :with => user[:password_confirmation]
-  click_button "Sign up"
-end
-
-def sign_in user
-  visit root_path
-  click_link 'Sign in'
-  fill_in "Email", :with => user[:email]
-  fill_in "Password", :with => user[:password]
-  click_button "Sign in"
-end
-
 #Project
-def valid_project
-  @project ||= {name: "my project", description: "my project description"}
-end
 
-def valid_other_project
-  @project ||= {name: "my other project", description: "my other project description"}
-end
-
-def create_project project
-  visit root_path
-  find('.menu').find('.dropdown-toggle').click
-  click_link('Project')
-  fill_in "Name", with: project[:name]
-  fill_in "Description", with: project[:description]
-  click_button "Create Project"
-end
-
-def update_project project
-  visit root_path
-  find('#project').click_link('Edit')
-  fill_in "Name", with: project[:name]
-  fill_in "Description", with: project[:description]
-  click_button "Update Project"
-end
 
 def invite_user user
   find('#project').click_link('Peoples')

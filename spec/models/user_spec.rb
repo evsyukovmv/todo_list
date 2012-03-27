@@ -8,7 +8,6 @@ describe User do
   end
 
   it { should have_many :task_lists }
-  it { should have_many :projects }
   it { should have_many :tasks }
   it { should have_many :relationships }
 

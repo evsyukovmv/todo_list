@@ -8,7 +8,7 @@ class User < ActiveRecord::Base
   attr_accessible :email, :password, :password_confirmation, :remember_me
 
   has_many :task_lists, :dependent => :destroy
-  has_many :projects, :dependent => :destroy
+  #has_many :projects, :dependent => :destroy
   has_many :tasks, :foreign_key => :performer_id
   has_many :relationships
 

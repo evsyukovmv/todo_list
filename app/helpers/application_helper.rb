@@ -1,4 +1,5 @@
 module ApplicationHelper
+
   def title
     base_title = "Todo list"
     if @title.nil?
@@ -7,4 +8,5 @@ module ApplicationHelper
       "#{base_title} | #{@title}"
     end
   end
+
 end

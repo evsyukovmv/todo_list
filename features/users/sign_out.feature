@@ -2,16 +2,13 @@
 @javascript
 
 Feature: Sign out
-  In order to get access to the site
-  As a user
-  I want to be able to sign in
+  To protect my account from unauthorized access
+  A signed in user
+  Should be able to sign out
 
-  Scenario: User signs out with valid data
-    Given I exist as a user
-    And I am not logged in
-    When I sign in with valid user data
-    Then I should see user menu
-    Given I am not logged in
-    Then I should be sign out
-    When I return to the site
-    Then I should be sign out
+    Scenario: User signs out
+      Given I am logged in
+      When I sign out
+      Then I should see a signed out message
+      When I return to the site
+      Then I should be signed out

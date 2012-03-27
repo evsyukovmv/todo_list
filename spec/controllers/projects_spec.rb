@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'cancan/matchers'
 
 describe ProjectsController do
 
@@ -16,21 +17,23 @@ describe ProjectsController do
 
   describe "GET 'index'" do
 
+    it "should redirect to access page" do
+      [:read, :manage].each do |ability|
+        @ability.cannot ability, Project
+        get :index
+        response.should redirect_to access_url
+      end
+    end
+
     before(:each) do
       @projects_array = [@project, @project, @project]
       controller.stub_chain(:current_user, :projects).and_return @projects_array
-
       @ability.can :read, Project
       get :index
-
     end
 
     it "should assigns all projects to @projects" do
       assigns(:projects).should == @projects_array
-    end
-
-    it "should assigns title to All projects" do
-      assigns(:title).should == 'All projects'
     end
 
     it "should render template index" do
@@ -43,19 +46,16 @@ describe ProjectsController do
 
     before(:each) do
       Project.stub!(:find).and_return @project
-      @ability.can :read, Project
+    end
+
+    it "should redirect to access page" do
       get :show, id: @project.id
-    end
-
-    it "should assigns title to project name" do
-      assigns(:title).should == @project.name
-    end
-
-    it "should assigns project" do
-      assigns(:project).should == @project
+      response.should redirect_to access_url
     end
 
     it "should render template show" do
+      @ability.can :read, Project
+      get :show, id: @project.id
       response.should render_template(:show)
     end
 
@@ -67,14 +67,6 @@ describe ProjectsController do
       Project.stub!(:new).and_return @project
       @ability.can :manage, Project
       get :new
-    end
-
-    it "should assigns title New project" do
-      assigns(:title).should == 'New project'
-    end
-
-    it "should assigns project" do
-      assigns(:project).should == @project
     end
 
     it "should render template new" do
@@ -89,14 +81,6 @@ describe ProjectsController do
       Project.stub!(:find).and_return @project
       @ability.can :manage, Project
       get :edit, id: @project.id
-    end
-
-    it "should assigns title Edit project name" do
-      assigns(:title).should == 'Edit project '+@project.name
-    end
-
-    it "should assigns project" do
-      assigns(:project).should == @project
     end
 
     it "should render edit template" do
@@ -120,10 +104,6 @@ describe ProjectsController do
         flash[:success].should == 'Project was successfully created'
       end
 
-      it "should assigns project" do
-        assigns(:project).should == @project
-      end
-
       it "should redirect to project" do
         response.should redirect_to @project
       end
@@ -137,10 +117,6 @@ describe ProjectsController do
         @project_invalid.stub!(:user=)
         @ability.can :manage, Project
         post :create, project: @project
-      end
-
-      it "should assigns invalid project" do
-        assigns(:project).should == @project_invalid
       end
 
       it "should return error flash" do
@@ -166,10 +142,6 @@ describe ProjectsController do
         post :update, id: @project.id
       end
 
-      it "should assigns project" do
-        assigns(:project).should == @project
-      end
-
       it "should return success flash" do
         flash[:success].should == 'Project was successful updated'
       end
@@ -181,15 +153,12 @@ describe ProjectsController do
     end
 
     describe "update project with invalid data" do
+
       before(:each) do
         Project.stub!(:find).and_return @project_invalid
         @project_invalid.stub!(:update_attributes).and_return false
         @ability.can :manage, Project
         post :update, id: @project.id
-      end
-
-      it "should assigns invalid project" do
-        assigns(:project).should == @project_invalid
       end
 
       it "should return error flash" do
@@ -214,10 +183,6 @@ describe ProjectsController do
         get :destroy, id: @project.id
       end
 
-      it "should assigns project" do
-        assigns(:project).should == @project
-      end
-
       it "should return success flash" do
         flash[:success].should == 'Project '+@project.name+' was successfully destroyed'
       end
@@ -237,10 +202,6 @@ describe ProjectsController do
         get :destroy, id: @project.id
       end
 
-      it "should assigns invalid project" do
-        assigns(:project).should == @project_invalid
-      end
-
       it "should return error flash" do
         flash[:error].should == 'Project destroy error'
       end
@@ -253,6 +214,7 @@ describe ProjectsController do
 
   end
 
+=begin
   describe "GET 'users' for project" do
 
     before(:each) do
@@ -264,10 +226,6 @@ describe ProjectsController do
 
     it "should assigns project" do
       assigns(:project).should == @project
-    end
-
-    it "should assigns title User of project" do
-      assigns(:title).should == "Users of "+@project.name
     end
 
     it "should render template users" do
@@ -286,10 +244,6 @@ describe ProjectsController do
 
     it "should assigns project" do
       assigns(:project).should == @project
-    end
-
-    it "should assigns title Invite to project" do
-      assigns(:title).should == 'Invite to '+@project.name
     end
 
     it "should render template invite" do
@@ -456,10 +410,6 @@ describe ProjectsController do
         assigns(:user).should == @user
       end
 
-      it "should assigns project" do
-        assigns(:project).should == @project
-      end
-
       it "should return flash success" do
         flash[:error].should == 'Error user destroy from project '+@project.name
       end
@@ -471,5 +421,6 @@ describe ProjectsController do
     end
 
   end
+=end
 
 end

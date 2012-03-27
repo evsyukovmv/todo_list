@@ -4,7 +4,6 @@ class TaskListsController < ApplicationController
   load_and_authorize_resource :task_list, :through => :project, :shallow => true
 
   def index
-    @title = 'All task lists'
     if @project
       @title += ' of project '+@project.name
       @task_lists = @project.task_lists
@@ -14,18 +13,15 @@ class TaskListsController < ApplicationController
   end
 
   def show
-    @title = @task_list.name
-    @title +=' of '+@project.name if @project
+
   end
 
   def new
-    @title = "New task list"
-    @title+=" in project "+@project.name if @project
+
   end
 
   def edit
-    @title = "Edit "+@task_list.name
-    @title +=" in "+@project.name if @project
+
   end
 
   def create

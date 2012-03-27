@@ -5,11 +5,10 @@ class TasksController < ApplicationController
 
   def index
     params[:state]? @tasks = @task_list.tasks.where("state = ?", params[:state]) : @tasks = @task_list.tasks
-    @title = "Tasks of "+@task_list.name
   end
 
   def show
-    @title = @task.name
+
   end
 
   def new
@@ -17,7 +16,6 @@ class TasksController < ApplicationController
     if @project
       @performers = @project.users if @project.users.count > 1
     end
-    @title = "New task in "+@task_list.name
   end
 
   def edit
@@ -25,7 +23,6 @@ class TasksController < ApplicationController
     if @project
       @performers = @project.users if @project.users.count > 1
     end
-    @title = "Edit task "+@task.name+" in "+@task_list.name
   end
 
   def create
