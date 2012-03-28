@@ -34,7 +34,7 @@ end
 
 Given /^I have project$/ do
   project = valid_project
-  FactoryGirl.create(:project, name: project[:name], user_id: @user.id)
+  FactoryGirl.create(:project, name: project[:name], description: project[:description], user_id: @user.id)
 end
 
 ### WHEN ###

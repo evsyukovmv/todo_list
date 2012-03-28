@@ -4,39 +4,46 @@ require 'cancan/matchers'
 describe ProjectsController do
 
   before(:each) do
+
     @user = Factory.create(:user)
     sign_in @user
-
-    @project =  mock_model(Project,  id: 1, name: 'Project name', save: true)
-    @project_invalid =  mock_model(Project,  id: 1, name: 'Project name', save: false)
 
     @ability = Object.new
     @ability.extend(CanCan::Ability)
     controller.stub(:current_ability) { @ability }
+
+    @project_params = { "name" => "Project name", "description" => "description text" }
+    @project =  mock_model(Project,  id: 1, name: 'Project name', description: "description text", save: true)
+
   end
 
   describe "GET 'index'" do
 
-    it "should redirect to access page" do
-      [:read, :manage].each do |ability|
-        @ability.cannot ability, Project
-        get :index
-        response.should redirect_to access_url
-      end
+    it "should redirect to access page without ability" do
+      @ability.cannot :read, Project
+      get :index
+      response.should redirect_to access_url
     end
 
     before(:each) do
       @projects_array = [@project, @project, @project]
       controller.stub_chain(:current_user, :projects).and_return @projects_array
       @ability.can :read, Project
+    end
+
+    it "should receive projects for current user" do
+      controller.stub!(:current_user).and_return @user
+      @user.should_receive(:projects).and_return @projects_array
       get :index
     end
 
     it "should assigns all projects to @projects" do
+      get :index
       assigns(:projects).should == @projects_array
     end
 
     it "should render template index" do
+      get :index
       response.should render_template(:index)
     end
 
@@ -44,17 +51,28 @@ describe ProjectsController do
 
   describe "GET 'show' for project" do
 
-    before(:each) do
-      Project.stub!(:find).and_return @project
-    end
-
-    it "should redirect to access page" do
+    it "should redirect to access page without ability" do
+      @ability.cannot :read, Project
       get :show, id: @project.id
       response.should redirect_to access_url
     end
 
-    it "should render template show" do
+    before(:each) do
       @ability.can :read, Project
+      Project.stub!(:find).and_return @project
+    end
+
+    it "should receive find and return project" do
+      Project.should_receive(:find).with(@project.id.to_s).and_return @project
+      get :show, id: @project.id
+    end
+
+    it "should assign project" do
+      get :show, id: @project.id
+      assigns(:project).should == @project
+    end
+
+    it "should render template show" do
       get :show, id: @project.id
       response.should render_template(:show)
     end
@@ -63,13 +81,30 @@ describe ProjectsController do
 
   describe "GET 'new'" do
 
+    it "should redirect to access page without ability" do
+      @ability.cannot :manage, Project
+      get :new
+      response.should redirect_to access_url
+    end
+
     before(:each) do
-      Project.stub!(:new).and_return @project
       @ability.can :manage, Project
+      Project.stub!(:new).and_return @project
+    end
+
+    it "should receive new" do
+      Project.should_receive(:new).with({}).and_return @project
       get :new
     end
 
+    it "should assign project" do
+      get :new
+      assigns(:project).should == @project
+    end
+
+
     it "should render template new" do
+      get :new
       response.should render_template(:new)
     end
 
@@ -77,13 +112,29 @@ describe ProjectsController do
 
   describe "GET 'edit'" do
 
+    it "should redirect to access page without ability" do
+      @ability.cannot :manage, Project
+      get :edit, id: @project.id
+      response.should redirect_to access_url
+    end
+
     before(:each) do
-      Project.stub!(:find).and_return @project
       @ability.can :manage, Project
+      Project.stub!(:find).and_return @project
+    end
+
+    it "should receive find and return project" do
+      Project.should_receive(:find).with(@project.id.to_s).and_return @project
       get :edit, id: @project.id
     end
 
+    it "should assign project" do
+      get :edit, id: @project.id
+      assigns(:project).should == @project
+    end
+
     it "should render edit template" do
+      get :edit, id: @project.id
       response.should render_template(:edit)
     end
 
@@ -91,20 +142,41 @@ describe ProjectsController do
 
   describe "POST 'create' for project" do
 
+    it "should redirect to access page without ability" do
+      @ability.cannot :manage, Project
+      post :create, project: @project_params
+      response.should redirect_to access_url
+    end
+
     describe "create project with valid data" do
 
       before(:each) do
-        Project.stub!(:new).and_return @project
-        @project.stub!(:user=)
         @ability.can :manage, Project
-        post :create, project: @project
+        Project.stub!(:new).and_return @project
+      end
+
+      it "should receive new and return project" do
+        Project.should_receive(:new).with(@project_params).and_return @project
+        post :create, project: @project_params
+      end
+
+      it "should assign project" do
+        post :create, project: @project_params
+        assigns(:project).should == @project
+      end
+
+      it "should receive save and return true" do
+        @project.should_receive(:save).and_return true
+        post :create, project: @project_params
       end
 
       it "should return success flash" do
+        post :create, project: @project_params
         flash[:success].should == 'Project was successfully created'
       end
 
       it "should redirect to project" do
+        post :create, project: @project_params
         response.should redirect_to @project
       end
 
@@ -113,17 +185,23 @@ describe ProjectsController do
     describe "create project with invalid data" do
 
       before(:each) do
-        Project.stub!(:new).and_return @project_invalid
-        @project_invalid.stub!(:user=)
         @ability.can :manage, Project
-        post :create, project: @project
+        Project.stub!(:new).and_return @project
+        @project.stub!(:save).and_return false
+      end
+
+      it "should receive save and return false" do
+        @project.should_receive(:save).and_return false
+        post :create, project: @project_params
       end
 
       it "should return error flash" do
+        post :create, project: @project_params
         flash[:error].should == 'Project create error'
       end
 
       it "should render template new" do
+        post :create, project: @project_params
         response.should render_template(:new)
       end
 
@@ -133,20 +211,45 @@ describe ProjectsController do
 
   describe "POST 'update' for project" do
 
+    before(:each) do
+      Project.stub!(:find).and_return @project
+    end
+
+    it "should redirect to access page without ability" do
+      @ability.cannot :manage, Project
+      post :update, id: @project.id, project: @project_params
+      response.should redirect_to access_url
+    end
+
     describe "update project with valid data" do
 
       before(:each) do
-        Project.stub!(:find).and_return @project
-        @project.stub!(:update_attributes).and_return @project
+        @project.stub!(:update_attributes).and_return true
         @ability.can :manage, Project
-        post :update, id: @project.id
+      end
+
+      it "should receive find and return project" do
+        Project.should_receive(:find).and_return @project
+        post :update, id: @project.id, project: @project_params
+      end
+
+      it "should assign project" do
+        post :update, id: @project.id, project: @project_params
+        assigns(:project).should == @project
+      end
+
+      it "should receive update attributes and return true" do
+        @project.should_receive(:update_attributes).with(@project_params).and_return true
+        post :update, id: @project.id, project: @project_params
       end
 
       it "should return success flash" do
+        post :update, id: @project.id, project: @project_params
         flash[:success].should == 'Project was successful updated'
       end
 
       it "should redirect to project" do
+        post :update, id: @project.id, project: @project_params
         response.should redirect_to @project
       end
 
@@ -155,17 +258,22 @@ describe ProjectsController do
     describe "update project with invalid data" do
 
       before(:each) do
-        Project.stub!(:find).and_return @project_invalid
-        @project_invalid.stub!(:update_attributes).and_return false
+        @project.stub!(:update_attributes).and_return false
         @ability.can :manage, Project
+      end
+
+      it "should receive update attributes and return false" do
+        @project.should_receive(:update_attributes).and_return false
         post :update, id: @project.id
       end
 
       it "should return error flash" do
+        post :update, id: @project.id
         flash[:error].should == 'Project update error'
       end
 
       it "should render template edit" do
+        post :update, id: @project.id
         response.should render_template(:edit)
       end
 
@@ -174,20 +282,47 @@ describe ProjectsController do
 
   describe "GET 'destroy' for project" do
 
+    before(:each) do
+      Project.stub!(:find).and_return @project
+    end
+
+    it "should redirect to access page without ability" do
+      @ability.cannot :manage, Project
+      get :destroy, id: @project.id
+      response.should redirect_to access_url
+    end
+
     describe "destroy project with valid data" do
 
       before(:each) do
-        Project.stub!(:find).and_return @project
-        @project.stub!(:destroy).and_return @project
         @ability.can :manage, Project
+        @project.stub!(:destroy).and_return @project
+      end
+
+
+      it "should receive find and return project" do
+        Project.should_receive(:find).with(@project.id.to_s).and_return @project
         get :destroy, id: @project.id
       end
 
+      it "should assign project" do
+        get :destroy, id: @project.id
+        assigns(:project).should == @project
+      end
+
+      it "should receive destroy and return project" do
+        @project.should_receive(:destroy).and_return @project
+        post :destroy, id: @project.id
+      end
+
       it "should return success flash" do
+        get :destroy, id: @project.id
         flash[:success].should == 'Project '+@project.name+' was successfully destroyed'
+
       end
 
       it "should redirect to projects_path" do
+        get :destroy, id: @project.id
         response.should redirect_to projects_path
       end
 
@@ -196,231 +331,27 @@ describe ProjectsController do
     describe "destroy project with invalid data" do
 
       before(:each) do
-        Project.stub!(:find).and_return @project_invalid
-        @project_invalid.stub!(:destroy).and_return false
+        @project.stub!(:destroy).and_return false
         @ability.can :manage, Project
-        get :destroy, id: @project.id
+      end
+
+      it "should receive destroy and return false" do
+        @project.should_receive(:destroy).and_return false
+        post :destroy, id: @project.id
       end
 
       it "should return error flash" do
+        get :destroy, id: @project.id
         flash[:error].should == 'Project destroy error'
       end
 
       it "should redirect to projects_path" do
+        get :destroy, id: @project.id
         response.should redirect_to projects_path
       end
 
     end
 
   end
-
-=begin
-  describe "GET 'users' for project" do
-
-    before(:each) do
-      Project.stub!(:find).and_return @project
-      @project.stub(:users).and_return [@user]
-      @ability.can :manage, Project
-      get :users, id: @project.id
-    end
-
-    it "should assigns project" do
-      assigns(:project).should == @project
-    end
-
-    it "should render template users" do
-      response.should render_template(:users)
-    end
-
-  end
-
-  describe "GET 'invite' for project" do
-
-    before(:each) do
-      Project.stub!(:find).and_return @project
-      @ability.can :manage, Project
-      get :invite, id: @project.id
-    end
-
-    it "should assigns project" do
-      assigns(:project).should == @project
-    end
-
-    it "should render template invite" do
-      response.should render_template(:invite)
-    end
-
-  end
-
-  describe "POST 'add_user' for project" do
-
-    describe "add user with valid data" do
-
-      before(:each) do
-        Project.stub!(:find).and_return @project
-        User.stub!(:find_by_email).and_return @user
-        @ability.can :manage, Project
-        post :add_user, id: @project.id, email: @user.email
-      end
-
-      it "should assigns user" do
-        assigns(:invited_user).should == @user
-      end
-
-      it "should assigns project" do
-        assigns(:project).should == @project
-      end
-
-      it "should return flash success" do
-        flash[:success].should == 'User was successfully added to project'
-      end
-
-      it "should redirect to invite_project_url" do
-        response.should redirect_to invite_project_url(@project)
-      end
-    end
-
-    describe "add user with invalid data" do
-
-      describe "user not found in database" do
-        before(:each) do
-          Project.stub!(:find).and_return @project
-          User.stub!(:find_by_email).and_return nil
-          @ability.can :manage, Project
-          post :add_user, id: @project.id, email: @user.email
-        end
-
-        it "should assigns user nil" do
-          assigns(:invited_user).should == nil
-        end
-
-        it "should assigns project" do
-          assigns(:project).should == @project
-        end
-
-        it "should return flash error" do
-          flash[:error].should == 'Error. No such user'
-        end
-
-        it "should redirect to invite_project_url" do
-          response.should redirect_to invite_project_url(@project)
-        end
-
-      end
-
-    end
-
-    describe "project not found in database" do
-      before(:each) do
-        Project.stub!(:find).and_return nil
-        User.stub!(:find_by_email).and_return @user
-        @ability.can :manage, Project
-        post :add_user, id: @project.id, email: @user.email
-      end
-
-      it "should assigns user" do
-        assigns(:invited_user).should == @user
-      end
-
-      it "should assigns project" do
-        assigns(:project).should == nil
-      end
-
-      it "should return flash error" do
-        flash[:error].should == 'Error. No such project'
-      end
-
-      it "should redirect to invite_project_url" do
-        response.should redirect_to projects_url
-      end
-
-    end
-
-    describe "relation not saved" do
-      before(:each) do
-        Project.stub!(:find).and_return @project
-        User.stub!(:find_by_email).and_return @user
-        Relationship.stub!(:new).and_return mock_model(Relationship, save: false)
-        @ability.can :manage, Project
-
-        post :add_user, id: @project.id, email: @user.email
-      end
-
-      it "should assigns user" do
-        assigns(:invited_user).should == @user
-      end
-
-      it "should assigns project" do
-        assigns(:project).should == @project
-      end
-
-      it "should return flash error" do
-        flash[:error].should == 'Error add user to project'
-      end
-
-      it "should redirect to invite_project_url" do
-        response.should redirect_to invite_project_url(@project)
-      end
-
-    end
-
-  end
-
-  describe "GET 'remove_user' for project" do
-
-    describe "remove with valid data" do
-
-      before(:each) do
-        Project.stub!(:find).and_return @project
-        User.stub!(:find_by_id).and_return @user
-        @project.stub_chain(:relationships, :find_by_user_id, :destroy).and_return true
-        @ability.can :manage, Project
-        get :remove_user, id: @project.id, user_id: @user.id
-      end
-
-      it "should assigns user" do
-        assigns(:user).should == @user
-      end
-
-      it "should assigns project" do
-        assigns(:project).should == @project
-      end
-
-      it "should return flash success" do
-        flash[:success].should == 'User was successfully removed from project '+@project.name
-      end
-
-      it "should redirect to user_project_path" do
-        response.should redirect_to users_project_path(@project)
-      end
-
-    end
-
-    describe "remove with invalid data" do
-
-      before(:each) do
-        Project.stub!(:find).and_return @project
-        User.stub!(:find_by_id).and_return @user
-        @project.stub_chain(:relationships, :find_by_user_id, :destroy).and_return false
-        @ability.can :manage, Project
-        get :remove_user, id: @project.id, user_id: @user.id
-      end
-
-      it "should assigns user" do
-        assigns(:user).should == @user
-      end
-
-      it "should return flash success" do
-        flash[:error].should == 'Error user destroy from project '+@project.name
-      end
-
-      it "should redirect to user_project_path" do
-        response.should redirect_to users_project_path(@project)
-      end
-
-    end
-
-  end
-=end
 
 end

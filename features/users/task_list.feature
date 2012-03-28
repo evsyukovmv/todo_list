@@ -7,30 +7,32 @@ Feature: Task list
   I want create, delete and update task lists
 
   Background:
-    Given I exist as a user
-    And I should see user menu
+    Given I am logged in
 
-  Scenario: User can create task list
+  Scenario: User can create task list with valid data
     When I create task list with valid data
     Then I see successful create task list message
+
+  Scenario: User can't create task list with invalid data
     When I create task list with invalid data
     Then I see an invalid create task list messages
-    When I create project with valid data
-    Then I see successful create project message
+
+  Scenario: User can create task list in project
+    Given I have project
     When I create task list with valid data in project
     Then I see successful create task list message in project
 
   Scenario: User can edit task list
-    When I create task list with valid data
-    Then I see successful create task list message
+    Given I have task list
     When I update task list with valid data
     Then I see successful update task list message
+
+  Scenario: User can't edit task with invalid data
+    Given I have task list
     When I update task list with invalid data
     Then I see an invalid update task list messages
 
   Scenario: User can destroy task list
-    When I create task list with valid data
-    Then I see successful create task list message
+    Given I have task list
     When I destroy task list
-    Then I should see user menu
     And I see successful destroy task list message

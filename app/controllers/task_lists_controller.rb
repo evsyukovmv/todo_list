@@ -5,7 +5,6 @@ class TaskListsController < ApplicationController
 
   def index
     if @project
-      @title += ' of project '+@project.name
       @task_lists = @project.task_lists
     else
       @task_lists = current_user.task_lists.where('project_id IS NULL')

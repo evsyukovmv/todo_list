@@ -8,9 +8,21 @@ describe Relationship do
   it { should validate_presence_of(:project_id) }
 
   it "should have uniqueness project and user" do
-    Relationship.create! :user_id => 1, :project_id => 2
-    duplicate_record = Relationship.new user_id: 1, project_id: 2
+    user = FactoryGirl.create(:user)
+    project = FactoryGirl.create(:project)
+    Relationship.create! user_id: user.id, project_id: project.id
+    duplicate_record = Relationship.new user_id: user.id, project_id: project.id
     duplicate_record.should_not be_valid
   end
+
+  it "should receive mailer for notify invited user" do
+    user = FactoryGirl.create(:user)
+    project = FactoryGirl.create(:project)
+    relationship = Relationship.new user_id: user.id, project_id: project.id
+    Mailer.stub_chain(:invite, :deliver)
+    Mailer.should_receive(:invite).with(user, project.name)
+    relationship.save
+  end
+
 
 end

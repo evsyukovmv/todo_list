@@ -1,3 +1,32 @@
+def valid_task
+  @task ||= {name: "my_task_name", description: "my task description"}
+end
+
+def valid_update_task
+  @task ||= {name: "my_another_task_name", description: "my another task description"}
+end
+
+def create_task task
+  find('.menu').find('.dropdown-toggle').click
+  click_link('Task')
+  fill_in "Name", with: task[:name]
+  fill_in "Description", with: task[:description]
+  click_button "Create Task"
+end
+
+def update_task task
+  click_link 'Edit'
+  fill_in "Name", with: task[:name]
+  fill_in "Description", with: task[:description]
+  click_button "Update Task"
+end
+
+Given /^I have task$/ do
+  task = valid_task_list
+  FactoryGirl.create(:task, name: task[:name], description: task[:description], task_list_id: @task_list_created.id)
+end
+
+
 When /^I create task with valid data in task list$/ do
   visit root_path
   find('#task_list').click_link('Tasks')
@@ -81,59 +110,12 @@ Then /^I see successful update task message$/ do
 end
 
 When /^I update task with invalid data$/ do
+  visit root_path
+  find('#task_list').click_link('Tasks')
   task = valid_update_task.merge(name: "")
   update_task task
 end
 
 Then /^I see an invalid update task messages$/ do
   page.should have_content "Name can't be blank"
-end
-
-When /^I create task with valid data assign to other user in task list in project$/ do
-  visit root_path
-  find('#project').click_link('Tasks lists')
-  find('#task_list').click_link('Tasks')
-  user_other = valid_other_user
-  task = valid_task
-  find('.menu').find('.dropdown-toggle').click
-  click_link('Task')
-  fill_in "Name", with: task[:name]
-  fill_in "Description", with: task[:description]
-  select user_other[:email], from: 'Performer'
-  click_button "Create Task"
-end
-
-Then /^I see successful created task assigned to other in task list in project$/ do
-  visit root_path
-  find('#project').click_link('Tasks lists')
-  find('#task_list').click_link('Tasks')
-  task = valid_task
-  user_other = valid_other_user
-  page.should have_content task[:name]
-  page.should have_content task[:description]
-  page.should have_content user_other[:email]
-end
-
-When /^I update task with valid data assign to other user in task list in project$/ do
-  user = valid_user
-  task = valid_task
-  visit root_path
-  find('#project').click_link('Tasks lists')
-  find('#task_list').click_link('Tasks')
-  click_link 'Edit'
-  fill_in "Name", with: task[:name]
-  fill_in "Description", with: task[:description]
-  select user[:email], from: 'Performer'
-  click_button "Update Task"
-end
-
-Then /^I see successful updated task assigned to other in task list in project$/ do
-  task = valid_task
-  user = valid_user
-  visit root_path
-  find('#project').click_link('Tasks lists')
-  find('#task_list').click_link('Tasks')
-  page.should have_content task[:name]
-  page.should have_content task[:description]
-  page.should have_content user[:email]
 end

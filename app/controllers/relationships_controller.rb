@@ -22,7 +22,6 @@ class RelationshipsController < ApplicationController
     @relationship.user_id = @invited_user
 
     if @relationship.save
-      Mailer.invite(@invited_user, @project.name).deliver
       flash[:success] = 'User was successfully added to project'
       redirect_to new_project_user_path(@project)
     else
