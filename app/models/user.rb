@@ -13,7 +13,7 @@ class User < ActiveRecord::Base
   has_many :relationships
 
   def projects
-    relationships.map(&:project) | Project.where(:user_id => id)
+    (relationships.map(&:project) | Project.where(:user_id => id)).compact
   end
 
 

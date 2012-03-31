@@ -6,7 +6,7 @@ class Ability
     unless user.new_record?
 
       can :manage, Project, user_id: user.id
-      can [:read, :users, :invite, :add_user], Project do |project|
+      can [:manage], Project do |project|
         project.users.include? user
       end
 

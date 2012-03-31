@@ -12,7 +12,7 @@ gem 'therubyracer'
 gem 'state_machine'
 gem 'cancan'
 gem 'devise'
-gem "symbolize", :require => "symbolize/active_record"
+gem 'rails-backbone'
 
 
 # Gems used only for assets and not required

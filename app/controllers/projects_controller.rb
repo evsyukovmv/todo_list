@@ -1,9 +1,11 @@
 class ProjectsController < ApplicationController
 
   load_and_authorize_resource
+  respond_to :json, :html
 
   def index
     @projects = current_user.projects
+    respond_with @projects
   end
 
   def show
