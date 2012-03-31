@@ -44,13 +44,4 @@ describe "routing to matches" do
     )
   end
 
-  it "routes /projects/1/remove_user/2 to projects#remove_user for project id and user id" do
-    { get: '/projects/1/remove_user/2' }.should route_to(
-      controller: 'projects',
-      action: 'remove_user',
-      id: '1',
-      user_id: '2'
-    )
-  end
-
 end

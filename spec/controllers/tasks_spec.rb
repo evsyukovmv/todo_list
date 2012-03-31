@@ -13,31 +13,47 @@ describe TasksController do
     TaskList.stub!(:find).and_return @task_list
 
     @task =  mock_model(Task,  id: 1, name: 'TaskList name', task_list_id: @task_list.id, save: true)
-    @task_invalid =  mock_model(Task,  id: 1, name: 'TaskList name', task_list_id: @task_list.id, save: false, destroy: false)
+    @task_params =  {name: 'TaskList name' }
 
     @ability = Object.new
     @ability.extend(CanCan::Ability)
     controller.stub(:current_ability) { @ability }
 
-    @ability.can :manage, TaskList
-    @ability.can :manage, Task
-
   end
 
   describe "GET 'index'" do
+
+    it "should redirect to access page without ability" do
+      @ability.cannot :read, TaskList
+      @ability.cannot :read, Task
+      get :index, task_list_id: @task_list.id
+      response.should redirect_to access_url
+    end
+
+    before(:each) do
+      @ability.can :read, TaskList
+      @ability.can :read, Task
+    end
+
     describe "with state" do
 
       before(:each) do
         @tasks = [@task, @task]
         @task_list.stub_chain(:tasks, :where).and_return @tasks
+      end
+
+      it "should receive tasks" do
+        @task_list.tasks.should_receive(:where).and_return @tasks
         get :index, task_list_id: @task_list.id, state: 'in_process'
       end
 
       it "should assign tasks" do
+        get :index, task_list_id: @task_list.id, state: 'in_process'
         assigns(:tasks).should == @tasks
       end
 
       it "should render template index" do
+        get :index, task_list_id: @task_list.id, state: 'in_process'
         response.should render_template :index
       end
 
@@ -48,14 +64,20 @@ describe TasksController do
       before(:each) do
         @tasks = [@task, @task, @task]
         @task_list.stub!(:tasks).and_return @tasks
+      end
+
+      it "should receive find" do
+        @task_list.should_receive(:tasks).and_return @tasks
         get :index, task_list_id: @task_list.id
       end
 
       it "should assign tasks" do
+        get :index, task_list_id: @task_list.id
         assigns(:tasks).should == @tasks
       end
 
       it "should render template index" do
+        get :index, task_list_id: @task_list.id
         response.should render_template :index
       end
 
@@ -64,20 +86,32 @@ describe TasksController do
   end
 
   describe "GET 'show'"  do
+
+    it "should redirect to access page without ability" do
+      @ability.cannot :read, TaskList
+      @ability.cannot :read, Task
+      get :index, task_list_id: @task_list.id
+      response.should redirect_to access_url
+    end
+
     before(:each) do
+      @ability.can :read, TaskList
+      @ability.can :read, Task
       @task_list.stub_chain(:tasks, :find).and_return @task
+    end
+
+    it "should receive find" do
+      @task_list.tasks.should_receive(:find).and_return @task
       get :show, task_list_id: @task_list.id, id: @task.id
     end
 
     it "should assigns task" do
+      get :show, task_list_id: @task_list.id, id: @task.id
       assigns(:task).should == @task
     end
 
-    it "should have title task" do
-      assigns(:title).should == @task.name
-    end
-
     it "should render template show" do
+      get :show, task_list_id: @task_list.id, id: @task.id
       response.should render_template :show
     end
   end
@@ -85,28 +119,48 @@ describe TasksController do
 
   describe "GET 'new'" do
 
+    it "should redirect to access page without ability" do
+      @ability.cannot :read, TaskList
+      @ability.cannot :manage, Task
+      get :new, task_list_id: @task_list.id
+      response.should redirect_to access_url
+    end
+
+    before(:each) do
+      @ability.can :read, TaskList
+      @ability.can :manage, Task
+    end
+
     describe "task list in project" do
 
       before(:each) do
         @task_list.stub!(:project).and_return @project
         @project.stub!(:users).and_return [@user, @user]
         @task_list.stub_chain(:tasks, :new).and_return @task
+      end
+
+      it "should receive new" do
+        @task_list.tasks.should_receive(:new).and_return @task
         get :new, task_list_id: @task_list.id
       end
 
       it "should assigns task" do
+        get :new, task_list_id: @task_list.id
         assigns(:task).should == @task
       end
 
+      it "should receive users" do
+        @project.should_receive(:users).and_return [@user, @user]
+        get :new, task_list_id: @task_list.id
+      end
+
       it "should not have performers" do
+        get :new, task_list_id: @task_list.id
         assigns(:performers).should == [@user, @user]
       end
 
-      it "should have title New task in task list" do
-        assigns(:title).should == "New task in "+@task_list.name
-      end
-
       it "should render template new" do
+        get :new, task_list_id: @task_list.id
         response.should render_template :new
       end
 
@@ -118,14 +172,6 @@ describe TasksController do
         @task_list.stub!(:project).and_return nil
         @task_list.stub_chain(:tasks, :new).and_return @task
         get :new, task_list_id: @task_list.id
-      end
-
-      it "should assigns task" do
-        assigns(:task).should == @task
-      end
-
-      it "should have title New task in task list" do
-        assigns(:title).should == "New task in "+@task_list.name
       end
 
       it "should not have performers" do
@@ -142,28 +188,49 @@ describe TasksController do
 
   describe "GET 'edit'" do
 
+    it "should redirect to access page without ability" do
+      @ability.cannot :read, TaskList
+      @ability.cannot :manage, Task
+      get :edit, task_list_id: @task_list.id, id: @task.id
+      response.should redirect_to access_url
+    end
+
+    before(:each) do
+      @ability.can :read, TaskList
+      @ability.can :manage, Task
+    end
+
+
     describe "task list in project" do
 
       before(:each) do
         @task_list.stub!(:project).and_return @project
         @project.stub!(:users).and_return [@user, @user]
         @task_list.stub_chain(:tasks, :find).and_return @task
-        get :edit, task_list_id: @task_list.id, id: @task.id
+      end
+
+      it "should receive find" do
+       @task_list.tasks.should_receive(:find).and_return @task
+       get :edit, task_list_id: @task_list.id, id: @task.id
       end
 
       it "should assigns task" do
+        get :edit, task_list_id: @task_list.id, id: @task.id
         assigns(:task).should == @task
       end
 
+      it "should receive users" do
+        @project.should_receive(:users).and_return [@user, @user]
+        get :edit, task_list_id: @task_list.id, id: @task.id
+      end
+
       it "should not have performers" do
+        get :edit, task_list_id: @task_list.id, id: @task.id
         assigns(:performers).should == [@user, @user]
       end
 
-      it "should have title New task in task list" do
-        assigns(:title).should == "Edit task "+@task.name+" in "+@task_list.name
-      end
-
       it "should render template edit" do
+        get :edit, task_list_id: @task_list.id, id: @task.id
         response.should render_template :edit
       end
 
@@ -175,14 +242,6 @@ describe TasksController do
         @task_list.stub!(:project).and_return nil
         @task_list.stub_chain(:tasks, :find).and_return @task
         get :edit, task_list_id: @task_list.id, id: @task.id
-      end
-
-      it "should assigns task" do
-        assigns(:task).should == @task
-      end
-
-      it "should have title New task in task list" do
-        assigns(:title).should == "Edit task "+@task.name+" in "+@task_list.name
       end
 
       it "should not have performers" do
@@ -200,77 +259,68 @@ describe TasksController do
 
   describe "POST 'create'"  do
 
-    describe "without project" do
+    it "should redirect to access page without ability" do
+      @ability.cannot :read, TaskList
+      @ability.cannot :manage, Task
+      post :create, task_list_id: @task_list.id, task: @task_params
+      response.should redirect_to access_url
+    end
 
-      describe "with valid data" do
+    before(:each) do
+      @ability.can :read, TaskList
+      @ability.can :manage, Task
+    end
 
-        before(:each) do
-          @task_list.stub(:project).and_return nil
-          @task_list.stub_chain(:tasks, :new).and_return @task
-          @task.stub!(:save).and_return @task
-          post :create, task_list_id: @task_list.id
-        end
+    describe "with valid data" do
 
-        it "should assigns task" do
-          assigns(:task).should == @task
-        end
-
-        it "should have flash success" do
-          flash[:success].should == 'Task was successfully created'
-        end
-
-        it "should redirect to task list task  path" do
-          response.should redirect_to [@task_list, @task]
-        end
-
+      before(:each) do
+        @task_list.stub(:project).and_return nil
+        @task_list.stub_chain(:tasks, :new).and_return @task
+        @task.stub!(:save).and_return true
       end
 
-      describe "with invalid data" do
+      it "should receive new" do
+        @task_list.tasks.should_receive(:new).and_return @task
+        post :create, task_list_id: @task_list.id, task: @task_params
+      end
 
-        before(:each) do
-          @task_list.stub(:project).and_return nil
-          @task_list.stub_chain(:tasks, :new).and_return @task_invalid
-          @task.stub!(:save).and_return @task_invalid
-          post :create, task_list_id: @task_list.id
-        end
+      it "should assigns task" do
+        post :create, task_list_id: @task_list.id, task: @task_params
+        assigns(:task).should == @task
+      end
 
-        it "should assigns task" do
-          assigns(:task).should == @task_invalid
-        end
+      it "should receive save" do
+        @task.should_receive(:save).and_return @task
+        post :create, task_list_id: @task_list.id, task: @task_params
+      end
 
-        it "should have flash error" do
-          flash[:error].should == 'Error task create'
-        end
+      it "should have flash success" do
+        post :create, task_list_id: @task_list.id, task: @task_params
+        flash[:success].should == 'Task was successfully created'
+      end
 
-        it "should render template new" do
-          response.should render_template :new
-        end
-
+      it "should redirect to task list task  path" do
+        post :create, task_list_id: @task_list.id, task: @task_params
+        response.should redirect_to [@task_list, @task]
       end
 
     end
 
-    describe "with project" do
+    describe "with invalid data" do
 
       before(:each) do
-        @task_list.stub!(:project).and_return @project
+        @task_list.stub(:project).and_return nil
         @task_list.stub_chain(:tasks, :new).and_return @task
-        @task.stub!(:save).and_return @task
+        @task.stub!(:save).and_return false
+        post :create, task_list_id: @task_list.id, task: @task_params
       end
 
-      it "should send email if set performer" do
-        @task.stub!(:performer_id).and_return 1
-        @task.stub!(:user).and_return @user
-        Mailer.stub_chain(:changed, :deliver)
-        Mailer.should_receive(:changed).with(@user, @project.name, @task.name)
-        post :create, task_list_id: @task_list.id
+      it "should have flash error" do
+        flash[:error].should == 'Error task create'
       end
 
-      it "should not send mail it has not performer" do
-        @task.stub!(:performer_id).and_return nil
-        Mailer.stub_chain(:changed, :deliver)
-        Mailer.should_not_receive(:changed).with(@user, @project.name, @task.name)
-        post :create, task_list_id: @task_list.id
+      it "should render template new" do
+        response.should render_template :new
       end
 
     end
@@ -279,77 +329,68 @@ describe TasksController do
 
   describe "POST 'update'"  do
 
-    describe "without project" do
+    it "should redirect to access page without ability" do
+      @ability.cannot :read, TaskList
+      @ability.cannot :manage, Task
+      post :update, task_list_id: @task_list.id, id: @task.id, task: @task_params
+      response.should redirect_to access_url
+    end
 
-      describe "with valid data" do
+    before(:each) do
+      @ability.can :read, TaskList
+      @ability.can :manage, Task
+    end
 
-        before(:each) do
-          @task_list.stub(:project).and_return nil
-          @task_list.stub_chain(:tasks, :find).and_return @task
-          @task.stub!(:update_attributes).and_return @task
-          post :update, task_list_id: @task_list.id, id: @task.id
-        end
+    describe "with valid data" do
 
-        it "should assigns task" do
-          assigns(:task).should == @task
-        end
-
-        it "should have flash success" do
-          flash[:success].should == 'Task was successfully updated'
-        end
-
-        it "should redirect to task list task path" do
-          response.should redirect_to [@task_list, @task]
-        end
-
+      before(:each) do
+        @task_list.stub(:project).and_return nil
+        @task_list.stub_chain(:tasks, :find).and_return @task
+        @task.stub!(:update_attributes).and_return true
       end
 
-      describe "with invalid data" do
+      it "should receive find" do
+        @task_list.tasks.should_receive(:find).and_return @task
+        post :update, task_list_id: @task_list.id, id: @task.id, task: @task_params
+      end
 
-        before(:each) do
-          @task_list.stub(:project).and_return nil
-          @task_list.stub_chain(:tasks, :find).and_return @task_invalid
-          @task_invalid.stub!(:update_attributes).and_return false
-          post :update, task_list_id: @task_list.id, id: @task.id
-        end
+      it "should assigns task" do
+        post :update, task_list_id: @task_list.id, id: @task.id, task: @task_params
+        assigns(:task).should == @task
+      end
 
-        it "should assigns task" do
-          assigns(:task).should == @task_invalid
-        end
+      it "should receive update" do
+        @task.should_receive(:update_attributes).and_return true
+        post :update, task_list_id: @task_list.id, id: @task.id, task: @task_params
+      end
 
-        it "should have flash error" do
-          flash[:error].should == 'Error task update'
-        end
+      it "should have flash success" do
+        post :update, task_list_id: @task_list.id, id: @task.id, task: @task_params
+        flash[:success].should == 'Task was successfully updated'
+      end
 
-        it "should render template edit" do
-          response.should render_template :edit
-        end
-
+      it "should redirect to task list task path" do
+        post :update, task_list_id: @task_list.id, id: @task.id, task: @task_params
+        response.should redirect_to [@task_list, @task]
       end
 
     end
 
-    describe "with project" do
+    describe "with invalid data" do
 
       before(:each) do
-        @task_list.stub!(:project).and_return @project
+        @task_list.stub(:project).and_return nil
         @task_list.stub_chain(:tasks, :find).and_return @task
-        @task.stub!(:update_attributes).and_return @task
+        @task.stub!(:update_attributes).and_return false
+        post :update, task_list_id: @task_list.id, id: @task.id, task: @task_params
       end
 
-      it "should send email if set performer" do
-        @task.stub!(:performer_id).and_return 1
-        @task.stub!(:user).and_return @user
-        Mailer.stub_chain(:changed, :deliver)
-        Mailer.should_receive(:changed).with(@user, @project.name, @task.name)
-        post :update, task_list_id: @task_list.id, id: @task.id
+      it "should have flash error" do
+        flash[:error].should == 'Error task update'
       end
 
-      it "should not send mail it has not performer" do
-        @task.stub!(:performer_id).and_return nil
-        Mailer.stub_chain(:changed, :deliver)
-        Mailer.should_not_receive(:changed).with(@user, @project.name, @task.name)
-        post :update, task_list_id: @task_list.id, id: @task.id
+      it "should render template edit" do
+        response.should render_template :edit
       end
 
     end
@@ -359,24 +400,48 @@ describe TasksController do
 
   describe "GET 'destroy'" do
 
+    it "should redirect to access page without ability" do
+      @ability.cannot :read, TaskList
+      @ability.cannot :manage, Task
+      get :destroy, task_list_id: @task_list.id, id: @task.id
+      response.should redirect_to access_url
+    end
+
+    before(:each) do
+      @ability.can :read, TaskList
+      @ability.can :manage, Task
+    end
 
     describe "with valid task" do
 
       before(:each) do
         @task_list.stub_chain(:tasks, :find).and_return @task
         @task.stub!(:destroy).and_return @task
+      end
+
+      it "should receive find" do
+        @task_list.tasks.should_receive(:find).and_return @task
         get :destroy, task_list_id: @task_list.id, id: @task.id
       end
 
       it "should assigns task" do
+        get :destroy, task_list_id: @task_list.id, id: @task.id
         assigns(:task).should == @task
       end
 
+      it "should receive destroy" do
+        @task.should_receive(:destroy).and_return @task
+        get :destroy, task_list_id: @task_list.id, id: @task.id
+      end
+
+
       it "should have flash success" do
+        get :destroy, task_list_id: @task_list.id, id: @task.id
         flash[:success].should == 'Task '+@task.name+' was successfully destroyed'
       end
 
       it "should redirect to task list tasks path" do
+        get :destroy, task_list_id: @task_list.id, id: @task.id
         response.should redirect_to task_list_tasks_path
       end
 
@@ -387,13 +452,9 @@ describe TasksController do
     describe "with invalid task" do
 
       before(:each) do
-        @task_list.stub_chain(:tasks, :find).and_return @task_invalid
-        @task.stub!(:destroy).and_return @task_invalid
+        @task_list.stub_chain(:tasks, :find).and_return @task
+        @task.stub!(:destroy).and_return false
         get :destroy, task_list_id: @task_list.id, id: @task.id
-      end
-
-      it "should assigns task" do
-        assigns(:task).should == @task_invalid
       end
 
       it "should have flash success" do
@@ -411,77 +472,69 @@ describe TasksController do
 
   describe "GET 'change_state'"  do
 
-    describe "without project" do
+    it "should redirect to access page without ability" do
+      @ability.cannot :read, TaskList
+      @ability.cannot :manage, Task
+      get :change_state, task_list_id: @task_list.id, id: @task.id
+      response.should redirect_to access_url
+    end
 
-      describe "with valid data" do
+    before(:each) do
+      @ability.can :read, TaskList
+      @ability.can :manage, Task
+    end
 
-        before(:each) do
-          @task_list.stub(:project).and_return nil
-          @task_list.stub_chain(:tasks, :find).and_return @task
-          @task.stub!(:change_state).and_return @task
-          get :change_state, task_list_id: @task_list.id, id: @task.id
-        end
 
-        it "should assigns task" do
-          assigns(:task).should == @task
-        end
+    describe "with valid data" do
 
-        it "should have flash success" do
-          flash[:success].should == 'Task '+@task.name+' state was successfully updated'
-        end
-
-        it "should redirect to task list tasks path" do
-          response.should redirect_to task_list_tasks_path(@task_list)
-        end
-
+      before(:each) do
+        @task_list.stub(:project).and_return nil
+        @task_list.stub_chain(:tasks, :find).and_return @task
+        @task.stub!(:change_state).and_return true
       end
 
-      describe "with invalid data" do
+      it "should receive find" do
+        @task_list.tasks.should_receive(:find).and_return @task
+        get :change_state, task_list_id: @task_list.id, id: @task.id
+      end
 
-        before(:each) do
-          @task_list.stub(:project).and_return nil
-          @task_list.stub_chain(:tasks, :find).and_return @task_invalid
-          @task_invalid.stub!(:change_state).and_return false
-          get :change_state, task_list_id: @task_list.id, id: @task.id
-        end
+      it "should assigns task" do
+        get :change_state, task_list_id: @task_list.id, id: @task.id
+        assigns(:task).should == @task
+      end
 
-        it "should assigns task" do
-          assigns(:task).should == @task_invalid
-        end
+      it "should receive change_state" do
+        @task.should_receive(:change_state).and_return true
+        get :change_state, task_list_id: @task_list.id, id: @task.id
+      end
 
-        it "should have flash error" do
-          flash[:error].should == 'Error change task state'
-        end
+      it "should have flash success" do
+        get :change_state, task_list_id: @task_list.id, id: @task.id
+        flash[:success].should == 'Task '+@task.name+' state was successfully updated'
+      end
 
-        it "should redirect to task list tasks path" do
-          response.should redirect_to task_list_tasks_path(@task_list)
-        end
-
+      it "should redirect to task list tasks path" do
+        get :change_state, task_list_id: @task_list.id, id: @task.id
+        response.should redirect_to task_list_tasks_path(@task_list)
       end
 
     end
 
-    describe "with project" do
+    describe "with invalid data" do
 
       before(:each) do
-        @task_list.stub!(:project).and_return @project
+        @task_list.stub(:project).and_return nil
         @task_list.stub_chain(:tasks, :find).and_return @task
-        @task.stub!(:change_state).and_return @task
-      end
-
-      it "should send email if set performer" do
-        @task.stub!(:performer_id).and_return 1
-        @task.stub!(:user).and_return @user
-        Mailer.stub_chain(:changed, :deliver)
-        Mailer.should_receive(:changed).with(@user, @project.name, @task.name)
+        @task.stub!(:change_state).and_return false
         get :change_state, task_list_id: @task_list.id, id: @task.id
       end
 
-      it "should not send mail it has not performer" do
-        @task.stub!(:performer_id).and_return nil
-        Mailer.stub_chain(:changed, :deliver)
-        Mailer.should_not_receive(:changed).with(@user, @project.name, @task.name)
-        get :change_state, task_list_id: @task_list.id, id: @task.id
+      it "should have flash error" do
+        flash[:error].should == 'Error change task state'
+      end
+
+      it "should redirect to task list tasks path" do
+        response.should redirect_to task_list_tasks_path(@task_list)
       end
 
     end

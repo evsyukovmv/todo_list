@@ -17,6 +17,7 @@ class TaskListsController < ApplicationController
 
   def new
 
+    @r = ''
   end
 
   def edit

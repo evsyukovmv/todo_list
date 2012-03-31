@@ -10,7 +10,7 @@ class Mailer < ActionMailer::Base
   end
 
   def changed(user, project, task)
-    mail(:to => user.email, :subject => "Your task '#{task}' of '#{project}' state was changed")
+    mail(:to => user.email, :subject => "Your task '#{task}' of '#{project}' was changed")
   end
 
 end
