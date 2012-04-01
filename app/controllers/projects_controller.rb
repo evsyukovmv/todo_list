@@ -1,6 +1,6 @@
 class ProjectsController < ApplicationController
 
-  load_and_authorize_resource
+  #load_and_authorize_resource
   respond_to :json, :html
 
   def index
