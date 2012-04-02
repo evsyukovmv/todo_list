@@ -1,15 +1,21 @@
+Given /^I have task list in project with invited user$/ do
+  create_user_other
+  project = valid_project
+  user_project = FactoryGirl.create(:project, name: project[:name], description: project[:description], user_id: @user.id)
+  Relationship.create!(project_id: user_project.id, user_id: @user_other.id)
+end
 
-When /^I create task with valid data assign to other user in task list in project$/ do
+
+When /^I create task with valid data assign to other user$/ do
   visit root_path
   find('#project').click_link('Tasks lists')
   find('#task_list').click_link('Tasks')
-  user_other = valid_other_user
   task = valid_task
   find('.menu').find('.dropdown-toggle').click
   click_link('Task')
   fill_in "Name", with: task[:name]
   fill_in "Description", with: task[:description]
-  select user_other[:email], from: 'Performer'
+  select @user_other[:email], from: 'Performer'
   click_button "Create Task"
 end
 

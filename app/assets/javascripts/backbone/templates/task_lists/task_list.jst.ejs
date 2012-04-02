@@ -1,0 +1,20 @@
+<div class="span4">
+    <div class="item">
+        <div class="name">
+            <a href="/#/task_lists/<%= id %>/tasks"><%= name %></a>
+        </div>
+
+        <div class="description">
+            <%= description %>
+        </div>
+
+        <div class="operations">
+            <i class="icon-edit"></i>
+            <a href="/#/task_lists/<%= id %>/edit">Edit</a>
+            <i class="icon-remove"></i>
+            <a href="/#/task_lists/<%= id %>/destroy" class="destroy">Destroy</a>
+            <i class="icon-check"></i>
+            <a href="#/task_lists/<%= id %>/tasks">Tasks</a>
+        </div>
+    </div>
+</div>

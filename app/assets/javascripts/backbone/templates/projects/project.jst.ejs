@@ -1,7 +1,7 @@
 <div class="span4">
     <div class="item">
         <div class="name">
-            <a href="#<%= "id" %>/task_lists"><%= name %></a>
+            <a href="#/projects/<%= id %>/task_lists"><%= name %></a>
         </div>
 
         <div class="description">
@@ -10,13 +10,13 @@
 
         <div class="operations">
             <i class="icon-edit"></i>
-            <a href="#/<%= id %>/edit">Edit</a>
+            <a href="#/projects/<%= id %>/edit">Edit</a>
             <i class="icon-remove"></i>
-            <a href="#/<%= id %>/destroy" class="destroy">Destroy</a>
+            <a href="#/projects/<%= id %>/destroy" class="destroy">Destroy</a>
             <i class="icon-list-alt"></i>
-            <a href="#/<%= id %>/task_lists">Task lists</a>
+            <a href="#/projects/<%= id %>/task_lists">Task lists</a>
             <i class="icon-user"></i>
-            <a href="#/<%= id %>/users">Users</a>
+            <a href="#/projects/<%= id %>/users">Users</a>
         </div>
     </div>
 </div>

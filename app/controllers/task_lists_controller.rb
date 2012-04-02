@@ -17,7 +17,6 @@ class TaskListsController < ApplicationController
 
   def new
 
-    @r = ''
   end
 
   def edit
@@ -25,22 +24,26 @@ class TaskListsController < ApplicationController
   end
 
   def create
-    if @task_list.save
-      flash[:success] = "Task list was successful created"
-      @project? redirect_to(project_task_lists_path) : redirect_to(task_lists_path)
-    else
-      flash[:error] = "Error task list create"
-      render 'new'
+    respond_to do |format|
+      if @task_list.save
+        format.html { redirect_to @task_list, success: 'Task list was successfully created' }
+        format.json { render json: @task_list, status: :created, location: @task_list }
+      else
+        format.html { render action: "new" }
+        format.json { render json: @task_list.errors, status: :unprocessable_entity }
+      end
     end
   end
 
   def update
-    if @task_list.update_attributes params[:task_list]
-      flash[:success] = "Task list was successful updated"
-      @project? redirect_to([@project, @task_list]) : redirect_to(@task_list)
-    else
-      flash[:error] = "Error task list update"
-      render 'edit'
+    respond_to do |format|
+      if @task_list.update_attributes(params[:task_list])
+        format.html { redirect_to @task_list, success: 'Task list was successfully updated' }
+        format.json { head :no_content }
+      else
+        format.html { render action: "edit" }
+        format.json { render json: @task_list.errors, status: :unprocessable_entity }
+      end
     end
   end
 

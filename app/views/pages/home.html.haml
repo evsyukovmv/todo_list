@@ -1,7 +1,8 @@
 - if signed_in?
-  - @title = "Todo list"
-  = render 'shared/error_messages'
-  = render 'shared/projects_task_lists'
+  #pages
+  - content_for :javascript do
+    new TodoList.Routers.PagesRouter({projects: #{ @projects.to_json(include: :task_lists).html_safe }, task_lists: #{ @task_lists.to_json(include: :tasks).html_safe } })
+    Backbone.history.start()
 - else
   - @title = "Todo list sign up"
   .row.title

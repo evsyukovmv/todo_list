@@ -1,10 +1,10 @@
-TodoList.Views.Projects ||= {}
+TodoList.Views.TaskLists ||= {}
 
-class TodoList.Views.Projects.NewView extends Backbone.View
-  template: JST["backbone/templates/projects/new"]
+class TodoList.Views.TaskLists.NewView extends Backbone.View
+  template: JST["backbone/templates/task_lists/new"]
 
   events:
-    "submit #new-project": "save"
+    "submit #new-task_list": "save"
 
   constructor: (options) ->
     super(options)
@@ -21,11 +21,11 @@ class TodoList.Views.Projects.NewView extends Backbone.View
     @model.unset("errors")
 
     @collection.create(@model.toJSON(),
-      success: (project) =>
-        @model = project
+      success: (task_list) =>
+        @model = task_list
         window.location.hash = "/"
 
-      error: (project, jqXHR) =>
+      error: (task_list, jqXHR) =>
         @model.set({errors: $.parseJSON(jqXHR.responseText)})
     )
 
