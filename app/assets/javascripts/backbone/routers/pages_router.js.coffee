@@ -6,12 +6,18 @@ class TodoList.Routers.PagesRouter extends Backbone.Router
     @task_lists = new TodoList.Collections.TaskListsCollection()
     @task_lists.reset options.task_lists
 
+    @tasks = new TodoList.Collections.TasksCollection()
+    @tasks.reset options.tasks
+
+    @task_lists_out = new TodoList.Collections.TaskListsCollection()
+
   routes:
     "/projects/new"      : "newProject"
     "/projects/index"    : "indexProject"
     "/projects/:id/edit" : "editProject"
     "/projects/:id"      : "showProject"
-    "/projects/:id/task_lists"      : "taskListsProject"
+    "/projects/:id/task_lists"      : "indexProjectTaskList"
+    "/projects/:id/task_lists/new"  : "newProjectTaskList"
     "/projects"    : "indexProject"
     "/projects/.*"    : "indexProject"
 
@@ -22,12 +28,23 @@ class TodoList.Routers.PagesRouter extends Backbone.Router
     "/task_lists"    : "indexTaskList"
     "/task_lists/.*"    : "indexTaskList"
 
+    "/task_lists/:task_list_id/tasks"    : "indexTaskTaskList"
+    "/task_lists/:task_list_id/tasks/new"    : "newTaskTaskList"
+    "/task_lists/:task_list_id/tasks/:id/edit"    : "editTaskTaskList"
+    "/task_lists/:task_list_id/tasks/:id"    : "showTaskTaskList"
+    "/task_lists/:task_list_id/tasks/.*"    : "indexTaskTaskList"
+
     "/"        : "index"
     ".*"        : "index"
 
   index: ->
-    @view = new TodoList.Views.Pages.IndexView(projects: @projects, taskLists: @task_lists)
+
+    @task_lists_out.reset  @task_lists.select((project_task_list) -> project_task_list.get("project_id") == null)
+    @view = new TodoList.Views.Pages.IndexView(projects: @projects, taskLists: @task_lists_out)
     $("#pages").html(@view.render().el)
+
+
+################# PROJECT ###################
 
   indexProject: ->
     @view = new TodoList.Views.Projects.IndexView(projects: @projects)
@@ -49,22 +66,31 @@ class TodoList.Routers.PagesRouter extends Backbone.Router
     @view = new TodoList.Views.Projects.EditView(model: project)
     $("#pages").html(@view.render().el)
 
-  taskListsProject: (id) ->
+  indexProjectTaskList: (id) ->
 
     project = @projects.get(id)
     project_task_lists = new TodoList.Collections.TaskListsCollection()
-    project_task_lists.reset project.get('task_lists')
+    project_task_lists.reset  @task_lists.select((project_task_list) -> project_task_list.get("project_id") == project.attributes.id)
 
-    @view = new TodoList.Views.TaskLists.IndexView(taskLists: project_task_lists)
+    @view = new TodoList.Views.TaskLists.IndexView(taskLists: project_task_lists, project: project)
     $("#pages").html(@view.render().el)
 
+  newProjectTaskList: (id) ->
+    project = @projects.get(id)
+    @view = new TodoList.Views.TaskLists.NewView(collection: @task_lists, project: project)
+    $("#pages").html(@view.render().el)
+
+
+
+################# TASK LIST ###################
 
   newTaskList: ->
     @view = new TodoList.Views.TaskLists.NewView(collection: @task_lists)
     $("#pages").html(@view.render().el)
 
   indexTaskList: ->
-    @view = new TodoList.Views.TaskLists.IndexView(taskLists: @task_lists)
+    @task_lists_out.reset  @task_lists.select((project_task_list) -> project_task_list.get("project_id") == null)
+    @view = new TodoList.Views.TaskLists.IndexView(taskLists: @task_lists_out)
     $("#pages").html(@view.render().el)
 
   showTaskList: (id) ->
@@ -78,4 +104,27 @@ class TodoList.Routers.PagesRouter extends Backbone.Router
 
     @view = new TodoList.Views.TaskLists.EditView(model: task_list)
     $("#pages").html(@view.render().el)
+
+################# TASK ###################
+
+  newTaskTaskList: ->
+    @view = new TodoList.Views.Tasks.NewView(collection: @tasks)
+    $("#pages").html(@view.render().el)
+
+  indexTaskTaskList: ->
+    @view = new TodoList.Views.Tasks.IndexView(tasks: @tasks)
+    $("#pages").html(@view.render().el)
+
+  showTaskTaskList: (id) ->
+    task = @tasks.get(id)
+
+    @view = new TodoList.Views.Tasks.ShowView(model: task)
+    $("#pages").html(@view.render().el)
+
+  editTaskTaskList: (id) ->
+    task = @tasks.get(id)
+
+    @view = new TodoList.Views.Tasks.EditView(model: task)
+    $("#pages").html(@view.render().el)
+
 

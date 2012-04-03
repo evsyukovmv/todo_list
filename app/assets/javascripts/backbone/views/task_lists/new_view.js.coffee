@@ -20,10 +20,16 @@ class TodoList.Views.TaskLists.NewView extends Backbone.View
 
     @model.unset("errors")
 
+    if @options.project
+      @model.attributes.project_id = @options.project.attributes.id
+
     @collection.create(@model.toJSON(),
       success: (task_list) =>
         @model = task_list
-        window.location.hash = "/"
+        if @model.attributes.project_id
+          window.location.hash = "/projects/"+@model.attributes.project_id+"/task_lists"
+        else
+          window.location.hash = "/task_lists"
 
       error: (task_list, jqXHR) =>
         @model.set({errors: $.parseJSON(jqXHR.responseText)})
@@ -31,7 +37,6 @@ class TodoList.Views.TaskLists.NewView extends Backbone.View
 
   render: ->
     $(@el).html(@template(@model.toJSON() ))
-
     this.$("form").backboneLink(@model)
 
     return this

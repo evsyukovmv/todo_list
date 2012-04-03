@@ -1,7 +1,10 @@
 - if signed_in?
   #pages
   - content_for :javascript do
-    new TodoList.Routers.PagesRouter({projects: #{ @projects.to_json(include: :task_lists).html_safe }, task_lists: #{ @task_lists.to_json(include: :tasks).html_safe } })
+    new TodoList.Routers.PagesRouter({projects: #{ @projects.to_json.html_safe },
+    task_lists: #{ @task_lists.to_json.html_safe },
+    tasks: #{ @tasks.to_json.html_safe }
+    })
     Backbone.history.start()
 - else
   - @title = "Todo list sign up"
