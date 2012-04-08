@@ -1,10 +1,20 @@
-<h1>New task</h1>
-
-<form id="new-task" name="task">
-  <div class="actions">
-    <input type="submit" value="Create Task" />
+<div class="row">
+  <div class="span6 offset3">
+    <h2>New task</h2>
+    <form id="new-task" name="task" class="well">
+      <div class="actions">
+        <div class="field">
+          <label>Name:</label>
+          <input type="text" name="name" value="" />
+        </div>
+        <div class="field">
+          <label>Description:</label>
+          <textarea name="description"></textarea>
+        </div>
+        <input type="submit" value="Create task" class="btn-primary" />
+      </div>
+    </form>
   </div>
+</div>
 
-</form>
-
-<a href="#/index">Back</a>
+<a href="/#/task_lists/index">Back</a>

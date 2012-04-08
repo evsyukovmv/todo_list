@@ -1,4 +1,12 @@
-
-<td><a href="#/<%= id %>">Show</td>
-<td><a href="#/<%= id %>/edit">Edit</td>
-<td><a href="#/<%= id %>/destroy" class="destroy">Destroy</a></td>
+  <td><i><%= name %></i></td>
+  <td><%= description %></td>
+  <td><%= priority %></td>
+  <td>email: <%= name %></td>
+  <td>
+    <i class="icon-flag"></i>
+    <a href="/#/task_lists/<%= task_list_id %>/tasks/<%= id %>/change_state" class="change_state"><%= state %></a>
+    <i class="icon-edit"></i>
+    edit
+    <i class="icon-remove"></i>
+    <a href="/#/task_lists/<%= task_list_id %>/tasks/<%= id %>/change_state" class="destroy">destroy</a>
+  </td>

@@ -19,11 +19,12 @@ class TodoList.Views.Tasks.NewView extends Backbone.View
     e.stopPropagation()
 
     @model.unset("errors")
+    @collection.url = '/task_lists/'+@options.task_list.id+'/tasks'
 
     @collection.create(@model.toJSON(),
       success: (task) =>
         @model = task
-        window.location.hash = "/#{@model.id}"
+        window.location.hash = "/task_lists/#{@options.task_list.id}/tasks"
 
       error: (task, jqXHR) =>
         @model.set({errors: $.parseJSON(jqXHR.responseText)})

@@ -107,12 +107,18 @@ class TodoList.Routers.PagesRouter extends Backbone.Router
 
 ################# TASK ###################
 
-  newTaskTaskList: ->
-    @view = new TodoList.Views.Tasks.NewView(collection: @tasks)
+  newTaskTaskList: (task_list_id) ->
+    @view = new TodoList.Views.Tasks.NewView(collection: @tasks, task_list: @task_lists.get(task_list_id))
     $("#pages").html(@view.render().el)
 
-  indexTaskTaskList: ->
-    @view = new TodoList.Views.Tasks.IndexView(tasks: @tasks)
+  indexTaskTaskList: (task_list_id) ->
+
+    task_list =  @task_lists.get(task_list_id)
+
+    task_list_tasks = new TodoList.Collections.TasksCollection()
+    task_list_tasks.reset  @tasks.select((task_list_task) -> task_list_task.get("task_list_id") == task_list.attributes.id)
+
+    @view = new TodoList.Views.Tasks.IndexView(tasks: task_list_tasks, task_list: task_list)
     $("#pages").html(@view.render().el)
 
   showTaskTaskList: (id) ->
@@ -121,10 +127,10 @@ class TodoList.Routers.PagesRouter extends Backbone.Router
     @view = new TodoList.Views.Tasks.ShowView(model: task)
     $("#pages").html(@view.render().el)
 
-  editTaskTaskList: (id) ->
+  editTaskTaskList: (task_list_id, id) ->
     task = @tasks.get(id)
 
-    @view = new TodoList.Views.Tasks.EditView(model: task)
+    @view = new TodoList.Views.Tasks.EditView(model: task, task_list: @task_lists.get(task_list_id))
     $("#pages").html(@view.render().el)
 
 
