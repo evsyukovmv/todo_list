@@ -40,9 +40,12 @@ Then /^I see invited user in project$/ do
   find('.table-striped').should have_content @user_other[:email]
 end
 
-Then /^Other user can see my project$/ do
+When /^Invited user open projects$/ do
   step 'I am not logged in'
   sign_in_other
+end
+
+Then /^Invited user can see my project$/ do
   project = valid_project
   page.should have_content project[:name]
   page.should have_content project[:description]

@@ -8,6 +8,6 @@ class Project < ActiveRecord::Base
   has_many :relationships
 
   def users
-    relationships.map(&:user) | User.where(id: user_id)
+    (relationships.map(&:user) | User.where(id: user_id)).compact
   end
 end

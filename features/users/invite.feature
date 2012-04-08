@@ -16,7 +16,7 @@ Feature: Invite
     Then I see invited user in project
 
   Scenario: Invited user can see my project
-    Given Invited user logged in
+    Given I invite other user to project
     When Invited user open projects
     Then Invited user can see my project
 

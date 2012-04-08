@@ -16,5 +16,6 @@ Feature: Task
     Then I see successful created task assigned to other user
 
   Scenario: User can update assign task
+    Given I create task with valid data assign to other user
     When I update task with valid data assign to self
     Then I see successful updated task assigned to self
