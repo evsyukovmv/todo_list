@@ -1,3 +1,3 @@
-{<img src="https://secure.travis-ci.org/evsyukovmv/todo_list.png?branch=master" alt="Build Status" />}[http://travis-ci.org/evsyukovmv/todo_list]
+[![Build Status](https://secure.travis-ci.org/evsyukovmv/todo_list.png?branch=master)](http://travis-ci.org/evsyukovmv/todo_list)
 
 Your task manager, that can handle your to-do list and manage team collaboration with other users.
