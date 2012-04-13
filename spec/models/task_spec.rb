@@ -10,8 +10,6 @@ describe Task do
 
   it { should belong_to :task_list }
 
-  it { should belong_to :user }
-
   it { should validate_presence_of(:name)}
 
   it "should accept valid states" do
@@ -38,26 +36,6 @@ describe Task do
       task.change_state
       task.state.should == state
     end
-  end
-
-  it "should receive mailer for notify about new task" do
-    user = FactoryGirl.create(:user)
-    project = FactoryGirl.create(:project)
-    task_list = FactoryGirl.create(:task_list, project_id: project.id, user_id: user.id)
-    task = FactoryGirl.build(:task, task_list_id: task_list.id, performer_id: user.id)
-    Mailer.stub_chain(:assignment, :deliver)
-    Mailer.should_receive(:assignment).with(user, project.name, task.name)
-    task.save!
-  end
-
-  it "should receive mailer for notify about update task" do
-    user = FactoryGirl.create(:user)
-    project = FactoryGirl.create(:project)
-    task_list = FactoryGirl.create(:task_list, project_id: project.id, user_id: user.id)
-    task = FactoryGirl.create(:task, task_list_id: task_list.id, performer_id: user.id)
-    Mailer.stub_chain(:changed, :deliver)
-    Mailer.should_receive(:changed).with(user, project.name, 'update')
-    task.update_attributes(name: 'update')
   end
 
 end
