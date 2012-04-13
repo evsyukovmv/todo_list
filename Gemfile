@@ -7,7 +7,7 @@ gem 'rails', '3.1.3'
 
 gem 'jquery-rails'
 gem 'haml'
-gem 'sqlite3'
+gem 'mysql'
 gem 'therubyracer'
 gem 'state_machine'
 gem 'cancan'
