@@ -7,7 +7,7 @@ gem 'rails', '3.1.3'
 
 gem 'jquery-rails'
 gem 'haml'
-gem 'mysql'
+gem 'pg'
 gem 'therubyracer'
 gem 'state_machine'
 gem 'cancan'
@@ -24,10 +24,12 @@ group :assets do
 end
 
 group :development do
+  gem 'sqlite3'
   gem 'annotate', :git => 'git://github.com/jeremyolliver/annotate_models.git', :branch => 'rake_compatibility'
 end
 
 group :test do
+  gem 'sqlite3'
   gem 'webrat'
   gem 'rspec-rails'
   gem 'factory_girl_rails'
