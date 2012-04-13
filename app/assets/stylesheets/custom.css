@@ -242,3 +242,8 @@ tr.task_done td{
     margin-left: 10px;
     font-weight: bold;
 }
+
+.nav a{
+    font-weight: bold;
+    color: #008080;
+}

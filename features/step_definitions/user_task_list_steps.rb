@@ -7,18 +7,17 @@ def valid_other_task_list
 end
 
 def create_task_list task_list
-  find('.menu').find('.dropdown-toggle').click
-  click_link('Task list')
-  fill_in "Name", with: task_list[:name]
-  fill_in "Description", with: task_list[:description]
-  click_button "Create Task list"
+  click_link('New Task list')
+  fill_in "name", with: task_list[:name]
+  fill_in "description", with: task_list[:description]
+  click_button "Create task list"
 end
 
 def update_task_list task_list
   find('#task_list').click_link('Edit')
-  fill_in "Name", with: task_list[:name]
-  fill_in "Description", with: task_list[:description]
-  click_button "Update Task list"
+  fill_in "name", with: task_list[:name]
+  fill_in "description", with: task_list[:description]
+  click_button "Update task list"
 end
 
 Given /^I have task list$/ do
@@ -43,7 +42,9 @@ When /^I create task list with invalid data$/ do
 end
 
 Then /^I see an invalid create task list messages$/ do
-  page.should have_content "Name can't be blank"
+  page.should have_selector(:xpath, "//input[@type='text' and @name='name']")
+  page.should have_selector(:xpath, "//textarea[@name='description']")
+  page.should have_selector(:xpath, "//input[@type='submit' and @value='Create task list']")
 end
 
 When /^I update task list with valid data$/ do
@@ -65,18 +66,18 @@ When /^I update task list with invalid data$/ do
 end
 
 Then /^I see an invalid update task list messages$/ do
-  page.should have_content "Name can't be blank"
+  page.should have_selector(:xpath, "//input[@type='text' and @name='name']")
+  page.should have_selector(:xpath, "//textarea[@name='description']")
+  page.should have_selector(:xpath, "//input[@type='submit' and @value='Update task list']")
 end
 
 When /^I destroy task list$/ do
   visit root_path
-  page.evaluate_script('window.confirm = function() { return true; }')
   find('#task_list').click_link('Destroy')
 end
 
 Then /^I see successful destroy task list message$/ do
   task_list = valid_task_list
-  page.should have_content 'Task list '+task_list[:name]+' was successfully destroyed'
   visit root_path
   page.should_not have_content task_list[:name]
   page.should_not have_content task_list[:description]

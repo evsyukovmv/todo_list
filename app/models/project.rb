@@ -5,9 +5,5 @@ class Project < ActiveRecord::Base
 
   belongs_to :user
   has_many :task_lists, :dependent => :destroy
-  has_many :relationships
 
-  def users
-    relationships.map(&:user) | User.where(id: user_id)
-  end
 end

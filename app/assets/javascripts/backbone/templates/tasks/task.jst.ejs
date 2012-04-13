@@ -1,12 +1,11 @@
   <td><i><%= name %></i></td>
   <td><%= description %></td>
   <td><%= priority %></td>
-  <td>email: <%= name %></td>
-  <td>
+  <td class="operations">
     <i class="icon-flag"></i>
-    <a href="/#/task_lists/<%= task_list_id %>/tasks/<%= id %>/change_state" class="change_state"><%= state %></a>
+    <a href="/#/task_lists/<%= task_list_id %>/tasks/<%= id %>" class="change_state"><%= state.replace(/_/g, " ") %></a><br />
     <i class="icon-edit"></i>
-    edit
+    <a href="/#/task_lists/<%= task_list_id %>/tasks/<%= id %>/edit">edit</a><br />
     <i class="icon-remove"></i>
-    <a href="/#/task_lists/<%= task_list_id %>/tasks/<%= id %>/change_state" class="destroy">destroy</a>
+    <a href="/#/task_lists/<%= task_list_id %>/tasks/<%= id %>" class="destroy">destroy</a>
   </td>

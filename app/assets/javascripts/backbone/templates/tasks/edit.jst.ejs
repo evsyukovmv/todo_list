@@ -1,6 +1,6 @@
 <div class="row">
   <div class="span6 offset3">
-    <h2>Editing task list</h2>
+    <h2>Editing task</h2>
     <form id="edit-task" name="task" class="well">
       <div class="actions">
         <div class="field">
@@ -11,10 +11,21 @@
           <label>Description:</label>
           <textarea name="description"><%= description %></textarea>
         </div>
-        <input type="submit" value="Update Task" class="btn-primary" />
+        <div class="field">
+          <label>Priority:</label>
+          <select name="priority">
+            <option value="0">0(low)</option>
+            <option value="1">1(low)</option>
+            <option value="2">2(low)</option>
+            <option value="3">3(middle)</option>
+            <option value="4">4(middle)</option>
+            <option value="5">5(high)</option>
+            <option value="6">6(high)</option>
+          </select>
+        </div>
+        <input type="submit" value="Update task" class="btn-primary" />
       </div>
     </form>
   </div>
 </div>
-
-<div id="back"></div>
+<div class="nav"><div id="back"></div></div>

@@ -8,6 +8,7 @@ class TodoList.Views.Tasks.IndexView extends Backbone.View
 
   addAll: () =>
     @options.tasks.each(@addOne)
+    @$("#title").append(' of task list '+@options.task_list.attributes.name)
     @$("#task_new").append('<a href="/#/task_lists/'+@options.task_list.id+'/tasks/new">New task</a>')
 
   addOne: (task) =>

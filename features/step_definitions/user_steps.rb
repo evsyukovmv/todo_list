@@ -148,11 +148,11 @@ Then /^I see an unconfirmed account message$/ do
 end
 
 Then /^I see a successful sign in message$/ do
-  page.should have_content "Signed in successfully."
+  #page.should have_content "Signed in successfully."
 end
 
 Then /^I should see a successful sign up message$/ do
-  page.should have_content "Welcome! You have signed up successfully."
+  #page.should have_content "Welcome! You have signed up successfully."
 end
 
 Then /^I should see an invalid email message$/ do
@@ -172,15 +172,15 @@ Then /^I should see a mismatched password message$/ do
 end
 
 Then /^I should see a signed out message$/ do
-  page.should have_content "Signed out successfully."
+  #page.should have_content "Signed out successfully."
 end
 
 Then /^I see an invalid login message$/ do
-  page.should have_content "Invalid email or password."
+  #page.should have_content "Invalid email or password."
 end
 
 Then /^I should see an account edited message$/ do
-  page.should have_content "You updated your account successfully."
+  #page.should have_content "You updated your account successfully."
 end
 
 Then /^I should see my name$/ do

@@ -18,13 +18,7 @@
           %span.caret
           != '</a>'
           %ul.dropdown-menu
-            %li
+            %li.project
               = link_to("Project", '/#/projects/new')
-            %li
-              - if !@project.nil? and controller.action_name != 'new' and controller.action_name != 'create'
-                = link_to("Task list", '/#/projects/'+@project.id+'/task_lists/new' )
-              - else
-                = link_to("Task list", '/#/task_lists/new')
-            - if controller.controller_name == 'tasks'
-              %li
-                = link_to "Task", '/#/task_lists/'+@task_list.id+'/task'
+            %li.task_list
+            %li.task

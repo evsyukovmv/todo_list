@@ -39,7 +39,7 @@ class TasksController < ApplicationController
 
   def update
     respond_to do |format|
-      if @task.update_attributes(params[:project])
+      if @task.update_attributes(params[:task])
         format.html { redirect_to @project, success: 'Task was successfully updated' }
         format.json { head :no_content }
       else

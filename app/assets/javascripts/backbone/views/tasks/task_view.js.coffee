@@ -16,9 +16,7 @@ class TodoList.Views.Tasks.TaskView extends Backbone.View
 
     return false
 
-  change_state : (e) ->
-    e.preventDefault()
-    e.stopPropagation()
+  change_state : () ->
 
     @model.url = '/task_lists/'+@model.attributes.task_list_id+'/tasks/'+@model.attributes.id
 
@@ -27,15 +25,13 @@ class TodoList.Views.Tasks.TaskView extends Backbone.View
     else if @model.attributes.state == 'not_done'
       @model.attributes.state = 'in_process'
     else
-      @model.attributes = 'not_done'
+      @model.attributes.state = 'not_done'
 
     @model.save(null,
       success : (task) =>
         @model = task
         window.location.hash = "/task_lists/#{@model.attributes.task_list_id}/tasks"
     )
-
-    return true
 
   render: ->
     $(@el).html(@template(@model.toJSON() ))

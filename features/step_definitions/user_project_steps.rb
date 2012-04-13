@@ -12,17 +12,17 @@ def create_project project
   visit root_path
   find('.menu').find('.dropdown-toggle').click
   click_link('Project')
-  fill_in "Name", with: project[:name]
-  fill_in "Description", with: project[:description]
-  click_button "Create Project"
+  fill_in "name", with: project[:name]
+  fill_in "description", with: project[:description]
+  click_button "Create project"
 end
 
 def update_project project
   visit root_path
   find('#project').click_link('Edit')
-  fill_in "Name", with: project[:name]
-  fill_in "Description", with: project[:description]
-  click_button "Update Project"
+  fill_in "name", with: project[:name]
+  fill_in "description", with: project[:description]
+  click_button "Update project"
 end
 
 ### GIVEN ###
@@ -61,7 +61,6 @@ end
 
 When /^I destroy project$/ do
   visit root_path
-  page.evaluate_script('window.confirm = function() { return true; }')
   find('#project').click_link('Destroy')
 end
 
@@ -69,29 +68,30 @@ end
 
 Then /^I see successful create project message$/ do
   project = valid_project
-  page.should have_content 'Project was successfully created'
   page.should have_content project[:name]
   page.should have_content project[:description]
 end
 
 Then /^I see an invalid create project messages$/ do
-  page.should have_content "Name can't be blank"
+  page.should have_selector(:xpath, "//input[@type='text' and @name='name']")
+  page.should have_selector(:xpath, "//textarea[@name='description']")
+  page.should have_selector(:xpath, "//input[@type='submit' and @value='Create project']")
 end
 
 Then /^I see successful update project message$/ do
   project = valid_other_project
-  page.should have_content 'Project was successful updated'
   page.should have_content project[:name]
   page.should have_content project[:description]
 end
 
 Then /^I see an invalid update project messages$/ do
-  page.should have_content "Name can't be blank"
+  page.should have_selector(:xpath, "//input[@type='text' and @name='name']")
+  page.should have_selector(:xpath, "//textarea[@name='description']")
+  page.should have_selector(:xpath, "//input[@type='submit' and @value='Update project']")
 end
 
 Then /^I see successful destroy project message$/ do
   project = valid_project
-  page.should have_content 'Project '+project[:name]+' was successfully destroyed'
   visit root_path
   page.should_not have_content project[:name]
   page.should_not have_content project[:description]

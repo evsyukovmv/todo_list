@@ -8,14 +8,6 @@ class User < ActiveRecord::Base
   attr_accessible :email, :password, :password_confirmation, :remember_me
 
   has_many :task_lists, :dependent => :destroy
-  #has_many :projects, :dependent => :destroy
-  has_many :tasks, :foreign_key => :performer_id
-  has_many :relationships
-
-  def projects
-    (relationships.map(&:project) | Project.where(:user_id => id)).compact
-  end
-
-
+  has_many :projects, :dependent => :destroy
 
 end

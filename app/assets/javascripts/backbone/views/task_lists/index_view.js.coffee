@@ -10,7 +10,7 @@ class TodoList.Views.TaskLists.IndexView extends Backbone.View
     @options.taskLists.each(@addOne)
     if @options.project
       @$("#title").append(' of project '+@options.project.attributes.name)
-      @$("#task_list_new").append('<a href="/#/projects/'+@options.project.attributes.id+'/task_lists/new">New Task List</a>')
+      @$("#task_list_new").append('<a href="/#/projects/'+@options.project.attributes.id+'/task_lists/new">New Task list</a>')
     else
       @$("#task_list_new").append('<a href="/#/task_lists/new">New Task List</a>')
 

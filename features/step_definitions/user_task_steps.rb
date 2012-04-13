@@ -9,16 +9,16 @@ end
 def create_task task
   find('.menu').find('.dropdown-toggle').click
   click_link('Task')
-  fill_in "Name", with: task[:name]
-  fill_in "Description", with: task[:description]
-  click_button "Create Task"
+  fill_in "name", with: task[:name]
+  fill_in "description", with: task[:description]
+  click_button "Create task"
 end
 
 def update_task task
-  click_link 'Edit'
-  fill_in "Name", with: task[:name]
-  fill_in "Description", with: task[:description]
-  click_button "Update Task"
+  click_link 'edit'
+  fill_in "name", with: task[:name]
+  fill_in "description", with: task[:description]
+  click_button "Update task"
 end
 
 Given /^I have task$/ do
@@ -37,7 +37,6 @@ Then /^I see successful create task message in task list$/ do
   task = valid_task
   page.should have_content task[:name]
   page.should have_content task[:description]
-  page.should have_content "Task was successfully created"
 end
 
 When /^I create task with invalid data in task list$/ do
@@ -48,14 +47,15 @@ When /^I create task with invalid data in task list$/ do
 end
 
 Then /^I see an invalid create task messages in task list$/ do
-  page.should have_content "Name can't be blank"
+  page.should have_selector(:xpath, "//input[@type='text' and @name='name']")
+  page.should have_selector(:xpath, "//textarea[@name='description']")
+  page.should have_selector(:xpath, "//input[@type='submit' and @value='Create task']")
 end
 
 When /^I destroy task$/ do
   visit root_path
   find('#task_list').click_link('Tasks')
-  page.evaluate_script('window.confirm = function() { return true; }')
-  find('.operations').click_link('Destroy')
+  find('.operations').click_link('destroy')
 end
 
 Then /^I see successful destroy task message$/ do
@@ -76,7 +76,7 @@ Then /^I see task is in process$/ do
   visit root_path
   find('#task_list').click_link('Tasks')
   within('.operations') do
-    page.should have_content('In process')
+    page.should have_content('in process')
   end
 end
 
@@ -84,7 +84,7 @@ Then /^I see task is done$/ do
   visit root_path
   find('#task_list').click_link('Tasks')
   within('.operations') do
-    page.should have_content('Done')
+    page.should have_content('done')
   end
 end
 
@@ -92,7 +92,7 @@ Then /^I see task id not done$/ do
   visit root_path
   find('#task_list').click_link('Tasks')
   within('.operations') do
-    page.should have_content('Not done')
+    page.should have_content('not done')
   end
 end
 
@@ -117,5 +117,7 @@ When /^I update task with invalid data$/ do
 end
 
 Then /^I see an invalid update task messages$/ do
-  page.should have_content "Name can't be blank"
+  page.should have_selector(:xpath, "//input[@type='text' and @name='name']")
+  page.should have_selector(:xpath, "//textarea[@name='description']")
+  page.should have_selector(:xpath, "//input[@type='submit' and @value='Update task']")
 end

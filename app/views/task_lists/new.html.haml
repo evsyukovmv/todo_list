@@ -1,8 +1,0 @@
-- @title = "New task list"
-- @title+=" in project "+@project.name if @project
-.row
-  .span6.offset3
-    %h2
-      New task list
-    = render 'form'
-    = @project.nil?? link_to('Back', task_lists_path) : link_to('Back', project_task_lists_path)
